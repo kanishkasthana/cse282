@@ -302,7 +302,16 @@ public class Bioinformatics {
     
     public String patternMatching(String pattern){
      StringBuilder positions=new StringBuilder();
-     
+     int k=pattern.length(),l=text.length();
+        for(int i=0;i<=(l-k);i++)
+        {  
+         if(text.substring(i,i+k).equals(pattern))
+         {
+             positions.append(i);
+             positions.append('\t');
+         }
+        }
+          
      return positions.toString();
     }
     /**
@@ -315,7 +324,7 @@ public class Bioinformatics {
             //Storing inputs in list inputs
             List inputs= new ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_1b.txt");
+            File newFile=new File("dataset_3_5.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -328,7 +337,6 @@ public class Bioinformatics {
             Bioinformatics newText=new Bioinformatics(inputs.get(1).toString());
             String pattern=inputs.get(0).toString();
             out.print(newText.patternMatching(pattern));
-            
             out.close();
             
         }
