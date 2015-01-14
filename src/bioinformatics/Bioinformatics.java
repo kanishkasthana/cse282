@@ -437,6 +437,15 @@ public class Bioinformatics {
      return mins;
     }
     
+    public static int hammingDistance(String text1,String text2){
+        int distance=0;
+        for(int i=0;i<text1.length();i++){
+            if(text1.charAt(i)!=text2.charAt(i))
+                distance++;
+        }
+        return distance;
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -447,7 +456,7 @@ public class Bioinformatics {
             //Storing inputs in list inputs
             List inputs= new ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_1e.txt");
+            File newFile=new File("dataset_9_3.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -457,14 +466,8 @@ public class Bioinformatics {
             //Creating PrintWriter for writing to output file
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             //Creating new Object to handle this string
-            Bioinformatics newText=new Bioinformatics();
-            String genome=inputs.get(0).toString();
-
-            List mins=newText.minimumSkew(genome);
-            for(Object obj:mins){
-             out.print(obj.toString());
-             out.print('\t');
-            }
+            String text1=inputs.get(0).toString(),text2=inputs.get(1).toString();
+            System.out.println(Bioinformatics.hammingDistance(text1, text2));
             
             out.close();
             
