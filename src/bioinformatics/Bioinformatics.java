@@ -446,6 +446,16 @@ public class Bioinformatics {
         return distance;
     }
     
+    public List approximatePatternMatch(String pattern,int d){
+        List positions= new ArrayList();
+        String newPattern;
+        for(int i=0;i<=text.length()-pattern.length();i++){
+            newPattern=text.substring(i,i+pattern.length());
+            if(hammingDistance(pattern,newPattern)<=d)
+                positions.add(i);
+        }
+        return positions;
+    }
     /**
      * @param args the command line arguments
      */
@@ -456,7 +466,7 @@ public class Bioinformatics {
             //Storing inputs in list inputs
             List inputs= new ArrayList();
             //Reading downloaded file
-            File newFile=new File("dataset_9_3.txt");
+            File newFile=new File("rosalind_1f.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -466,8 +476,14 @@ public class Bioinformatics {
             //Creating PrintWriter for writing to output file
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             //Creating new Object to handle this string
-            String text1=inputs.get(0).toString(),text2=inputs.get(1).toString();
-            System.out.println(Bioinformatics.hammingDistance(text1, text2));
+            String pattern=inputs.get(0).toString();
+            Bioinformatics newText=new Bioinformatics(inputs.get(1).toString());
+            int d=Integer.parseInt(inputs.get(2).toString());
+            List positions=newText.approximatePatternMatch(pattern, d);
+            for(Object obj:positions){
+                out.print(obj.toString());
+                out.print('\t');
+            }
             
             out.close();
             
