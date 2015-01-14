@@ -362,6 +362,45 @@ public class Bioinformatics {
         }    
         return frequentPatterns;
     }
+    
+    public List betterClumpFinding(String genome,int k,int t,int l){
+        List frequentPatterns=new ArrayList();
+        int end=power(4,k),i,j;
+        int[] clump=new int[end];
+        int[] frequencyArray;
+        String text,pattern,firstPattern,lastPattern;
+        for(i=0;i<=end-1;i++){
+            clump[i]=0;
+        }
+        text=genome.substring(0,0+l);
+        
+        frequencyArray=computingFrequencies(text,k);
+          for(i=0;i<=end-1;i++){
+              if(frequencyArray[i]>=t)
+                  clump[i]=1;
+          }
+        
+        for(i=1;i<=genome.length()-l;i++){
+          firstPattern=genome.substring(i-1,i-1+k);
+          j=patternToNumber(firstPattern);
+          frequencyArray[j]--;
+          lastPattern=genome.substring(i+l-k,i+l);
+          j=patternToNumber(lastPattern);
+          frequencyArray[j]++;
+          if(frequencyArray[j]>=t)
+              clump[j]=1;
+          
+        }
+        
+        for(i=0;i<=end-1;i++){
+            if(clump[i]==1){
+              pattern=numberToPattern(i,k);
+              frequentPatterns.add(pattern);
+            }
+        }    
+        return frequentPatterns;
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -384,8 +423,8 @@ public class Bioinformatics {
             //Creating new Object to handle this string
             Bioinformatics newText=new Bioinformatics();
             String genome=inputs.get(0).toString();
-            int k=11,l=569,t=19;
-            List frequentPatterns=newText.clumpFinding(genome, k, t, l);
+            int k=12,l=586,t=20;//12 586 20
+            List frequentPatterns=newText.betterClumpFinding(genome, k, t, l);
             for(Object obj:frequentPatterns){
              out.print(obj.toString());
              out.print('\t');
