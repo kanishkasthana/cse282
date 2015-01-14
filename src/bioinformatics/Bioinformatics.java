@@ -92,6 +92,16 @@ public class Bioinformatics {
      }  
      return max;
     }
+    public int minimum(int[] array){
+     int min=array[0];
+     for(int i=1;i<array.length;i++){
+         if(array[i]<=min){
+         min=array[i];
+        }
+     }  
+     return min;
+    }
+    
     public void removeDuplicates(){
      
     List uniqueElements=new ArrayList(); 
@@ -401,6 +411,32 @@ public class Bioinformatics {
         return frequentPatterns;
     }
     
+    public List minimumSkew(String genome){
+     List mins=new ArrayList();
+     int[] skew=new int[genome.length()+1];
+     skew[0]=0;
+     char current;
+     for(int i=1;i<=genome.length();i++){
+         current=genome.charAt(i-1);
+         if(current=='G'){
+          skew[i]=skew[i-1]+1;
+         }
+         else if(current=='C'){
+          skew[i]=skew[i-1]-1;   
+         }
+         else
+             skew[i]=skew[i-1];
+     }
+     int minSkew=minimum(skew);
+     
+     for(int i=0;i<=genome.length();i++){
+         if(skew[i]==minSkew){
+             mins.add(i);
+         }
+     }
+     return mins;
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -411,7 +447,7 @@ public class Bioinformatics {
             //Storing inputs in list inputs
             List inputs= new ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_1d.txt");
+            File newFile=new File("rosalind_1e.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -423,9 +459,9 @@ public class Bioinformatics {
             //Creating new Object to handle this string
             Bioinformatics newText=new Bioinformatics();
             String genome=inputs.get(0).toString();
-            int k=12,l=586,t=20;//12 586 20
-            List frequentPatterns=newText.betterClumpFinding(genome, k, t, l);
-            for(Object obj:frequentPatterns){
+
+            List mins=newText.minimumSkew(genome);
+            for(Object obj:mins){
              out.print(obj.toString());
              out.print('\t');
             }
