@@ -23,6 +23,9 @@ public class Bioinformatics {
         this.text=text;
         
     }
+    public Bioinformatics(){
+        
+    }
     
     public void setText(String text){
         this.text=text;
@@ -212,6 +215,23 @@ public class Bioinformatics {
        return frequencyArray;
     }
     
+    public int[] computingFrequencies(String text,int k){
+     int end=power(4,k),i,j;
+     int[] frequencyArray= new int[end];
+     String pattern;
+     
+     for(i=0;i<=end-1;i++){
+      frequencyArray[i]=0;
+     }
+     
+     for(i=0;i<=text.length()-k;i++){
+      pattern=text.substring(i,i+k);
+      j=patternToNumber(pattern);
+      frequencyArray[j]++;
+     }
+       return frequencyArray;
+    }
+    
     public void fasterFrequentWords(int k){
      List frequentPatterns=new ArrayList();
      computingFrequencies(k);
@@ -314,6 +334,34 @@ public class Bioinformatics {
           
      return positions.toString();
     }
+
+    public List clumpFinding(String genome,int k,int t,int l){
+        List frequentPatterns=new ArrayList();
+        int end=power(4,k),i,j;
+        int[] clump=new int[end];
+        int[] frequencyArray;
+        String text,pattern;
+        for(i=0;i<=end-1;i++){
+            clump[i]=0;
+        }
+        
+        for(i=0;i<=genome.length()-l;i++){
+          text=genome.substring(i,i+l);
+          frequencyArray=computingFrequencies(text,k);
+          for(j=0;j<=end-1;j++){
+              if(frequencyArray[j]>=t)
+                  clump[j]=1;
+          }
+        }
+        
+        for(i=0;i<=end-1;i++){
+            if(clump[i]==1){
+              pattern=numberToPattern(i,k);
+              frequentPatterns.add(pattern);
+            }
+        }    
+        return frequentPatterns;
+    }
     /**
      * @param args the command line arguments
      */
@@ -324,7 +372,7 @@ public class Bioinformatics {
             //Storing inputs in list inputs
             List inputs= new ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_1c.txt");
+            File newFile=new File("rosalind_1d.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -334,9 +382,15 @@ public class Bioinformatics {
             //Creating PrintWriter for writing to output file
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             //Creating new Object to handle this string
-            Bioinformatics newText=new Bioinformatics(inputs.get(1).toString());
-            String pattern=inputs.get(0).toString();
-            out.print(newText.patternMatching(pattern));
+            Bioinformatics newText=new Bioinformatics();
+            String genome=inputs.get(0).toString();
+            int k=11,l=569,t=19;
+            List frequentPatterns=newText.clumpFinding(genome, k, t, l);
+            for(Object obj:frequentPatterns){
+             out.print(obj.toString());
+             out.print('\t');
+            }
+            
             out.close();
             
         }
