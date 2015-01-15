@@ -273,6 +273,50 @@ public class Bioinformatics {
       return frequentPatterns;
     }
     
+    public List frequentWordsWithMismatchesAndReverseComplement(int k, int d){
+     int end=power(4,k),i,j;
+     int[] frequencyArray= new int[end];
+     
+     String patternd,pattern;
+     
+     for(i=0;i<=end-1;i++){
+         frequencyArray[i]=0;
+     }
+     
+     String reverseText=getReverseText();
+     
+     for(i=0;i<=text.length()-k;i++){
+         patternd=text.substring(i,i+k);
+         for(j=0;j<=end-1;j++){
+          pattern=numberToPattern(j,k);
+          if(hammingDistance(pattern,patternd)<=d)
+              frequencyArray[j]++;
+         }
+     }
+
+     for(i=0;i<=reverseText.length()-k;i++){
+         patternd=reverseText.substring(i,i+k);
+         for(j=0;j<=end-1;j++){
+          pattern=numberToPattern(j,k);
+          if(hammingDistance(pattern,patternd)<=d)
+              frequencyArray[j]++;
+         }
+     }
+
+     List frequentPatterns=new ArrayList();
+     int maxCount=maximum(frequencyArray);
+     
+     for(i=0;i<=end-1;i++){
+         if(frequencyArray[i]==maxCount){
+          pattern=numberToPattern(i,k);
+          frequentPatterns.add(pattern);
+         }
+     }
+      this.frequencyArray=frequencyArray;
+      
+      return frequentPatterns;
+    }
+    
     public void fasterFrequentWords(int k){
      List frequentPatterns=new ArrayList();
      computingFrequencies(k);
@@ -507,7 +551,7 @@ public class Bioinformatics {
             //Storing inputs in list inputs
             List inputs= new ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_1g.txt");
+            File newFile=new File("rosalind_1h.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -523,7 +567,7 @@ public class Bioinformatics {
             StringTokenizer st=new StringTokenizer(secondLine);
             int k=Integer.parseInt(st.nextToken());
             int d=Integer.parseInt(st.nextToken());
-            List patterns=newText.frequentWordsWithMismatches(k, d);
+            List patterns=newText.frequentWordsWithMismatchesAndReverseComplement(k, d);
             
             for(Object obj:patterns){
                 out.print(obj.toString());
