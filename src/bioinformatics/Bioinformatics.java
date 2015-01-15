@@ -242,6 +242,37 @@ public class Bioinformatics {
        return frequencyArray;
     }
     
+    public List frequentWordsWithMismatches(int k, int d){
+     int end=power(4,k),i,j;
+     int[] frequencyArray= new int[end];
+     String patternd,pattern;
+     
+     for(i=0;i<=end-1;i++){
+         frequencyArray[i]=0;
+     }
+     
+     for(i=0;i<=text.length()-k;i++){
+         patternd=text.substring(i,i+k);
+         for(j=0;j<=end-1;j++){
+          pattern=numberToPattern(j,k);
+          if(hammingDistance(pattern,patternd)<=d)
+              frequencyArray[j]++;
+         }
+     }
+     List frequentPatterns=new ArrayList();
+     int maxCount=maximum(frequencyArray);
+     
+     for(i=0;i<=end-1;i++){
+         if(frequencyArray[i]==maxCount){
+          pattern=numberToPattern(i,k);
+          frequentPatterns.add(pattern);
+         }
+     }
+      this.frequencyArray=frequencyArray;
+      
+      return frequentPatterns;
+    }
+    
     public void fasterFrequentWords(int k){
      List frequentPatterns=new ArrayList();
      computingFrequencies(k);
@@ -456,6 +487,16 @@ public class Bioinformatics {
         }
         return positions;
     }
+    public int approximatePatternCount(String pattern,int d){
+        int count=0;
+        String patternd;
+        for(int i=0;i<=text.length()-pattern.length();i++){
+            patternd=text.substring(i,i+pattern.length());
+            if(hammingDistance(pattern,patternd)<=d)
+                count++;
+        }
+        return count;
+    }
     /**
      * @param args the command line arguments
      */
@@ -466,7 +507,7 @@ public class Bioinformatics {
             //Storing inputs in list inputs
             List inputs= new ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_1f.txt");
+            File newFile=new File("rosalind_1g.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -476,15 +517,18 @@ public class Bioinformatics {
             //Creating PrintWriter for writing to output file
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             //Creating new Object to handle this string
-            String pattern=inputs.get(0).toString();
-            Bioinformatics newText=new Bioinformatics(inputs.get(1).toString());
-            int d=Integer.parseInt(inputs.get(2).toString());
-            List positions=newText.approximatePatternMatch(pattern, d);
-            for(Object obj:positions){
-                out.print(obj.toString());
-                out.print('\t');
-            }
             
+            Bioinformatics newText=new Bioinformatics(inputs.get(0).toString());
+            String secondLine=inputs.get(1).toString();
+            StringTokenizer st=new StringTokenizer(secondLine);
+            int k=Integer.parseInt(st.nextToken());
+            int d=Integer.parseInt(st.nextToken());
+            List patterns=newText.frequentWordsWithMismatches(k, d);
+            
+            for(Object obj:patterns){
+                out.print(obj.toString());
+                out.print("\t");
+            }
             out.close();
             
         }
