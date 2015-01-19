@@ -1,2 +1,2 @@
 # cse282
-Code for Bioinformatics Algorithms Class
+Source code data and revisions for the Bioinformatics Algorithms class taught by Pavel Pevzner
