@@ -512,7 +512,7 @@ public class Bioinformatics {
      return mins;
     }
     
-    public static int hammingDistance(String text1,String text2){
+    public int hammingDistance(String text1,String text2){
         int distance=0;
         for(int i=0;i<text1.length();i++){
             if(text1.charAt(i)!=text2.charAt(i))
@@ -562,19 +562,14 @@ public class Bioinformatics {
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             //Creating new Object to handle this string
             
-            Bioinformatics newText=new Bioinformatics(inputs.get(0).toString());
-            String secondLine=inputs.get(1).toString();
-            StringTokenizer st=new StringTokenizer(secondLine);
-            int k=Integer.parseInt(st.nextToken());
-            int d=Integer.parseInt(st.nextToken());
-            List patterns=newText.frequentWordsWithMismatchesAndReverseComplement(k, d);
             
-            for(Object obj:patterns){
-                out.print(obj.toString());
-                out.print("\t");
+            Bioinformatics2 newText=new Bioinformatics2();
+            List neighbours=newText.neighbours("CCTAATACC", 3);
+            
+            for(Object text:neighbours){
+                out.println(text);
             }
             out.close();
-            
         }
         catch(Exception e)
         {
