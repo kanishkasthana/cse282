@@ -150,6 +150,53 @@ public class Bioinformatics2 extends Bioinformatics {
        return median;
     }
     
+    //Redifining Max to account for floating point values
+    public double maximum(double[] array){
+     double max=array[0];
+     for(int i=1;i<array.length;i++){
+         if(array[i]>max){
+         max=array[i];
+        }
+    
+     }  
+     return max;
+    }
+    
+    public String profileMostProbableKmer(String text, int k, double[][] profileMatrix){
+        String mostProbable=null,pattern;
+        double[] patternProbability= new double[text.length()-k+1];
+        
+        for(int i=0;i<=text.length()-k;i++){
+            pattern=text.substring(i,i+k);
+            patternProbability[i]=patternProbability(pattern,profileMatrix);
+        }
+        
+        double maxProbability=maximum(patternProbability);
+        int maxPosition=0;
+        for(int i=0;i<=text.length()-k;i++){
+            if(patternProbability[i]==maxProbability){
+                maxPosition=i;
+                break;
+            }
+        }
+        
+        mostProbable=text.substring(maxPosition,maxPosition+k);        
+        
+        return mostProbable;
+    }
+    
+    public double patternProbability(String pattern, double[][] profileMatrix){
+        double patternProbability=1;
+        char currentSymbol;
+        int i;
+        for(int j=0;j<pattern.length();j++){
+            currentSymbol=pattern.charAt(j);
+            i=symbolToNumber(currentSymbol);
+            patternProbability*=profileMatrix[i][j];
+        }
+        return patternProbability;
+    }
+    
     public static void main2(){
          
     

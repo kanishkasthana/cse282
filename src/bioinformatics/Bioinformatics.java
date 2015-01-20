@@ -95,7 +95,7 @@ public class Bioinformatics {
     public int minimum(int[] array){
      int min=array[0];
      for(int i=1;i<array.length;i++){
-         if(array[i]<=min){
+         if(array[i]<min){
          min=array[i];
         }
      }  
@@ -551,7 +551,7 @@ public class Bioinformatics {
             //Storing inputs in list inputs
             List inputs= new ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_3b.txt");
+            File newFile=new File("rosalind_3c.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -564,16 +564,30 @@ public class Bioinformatics {
             //Creating new Object to handle this string
             
             Bioinformatics2 newText=new Bioinformatics2();
-            int k=Integer.parseInt(inputs.get(0).toString());
-            List dna= new ArrayList();
-            for(int i=1;i<inputs.size();i++){
-              dna.add(inputs.get(i).toString());
+            String text=inputs.get(0).toString();
+            int k=Integer.parseInt(inputs.get(1).toString());
+            double[][] profileMatrix= new double[4][k];
+            for(int i=0;i<4;i++){
+               StringTokenizer currentRow= new StringTokenizer(inputs.get(2+i).toString());
+               for(int j=0;j<k;j++){
+                   profileMatrix[i][j]=Double.parseDouble(currentRow.nextToken());
+               }
             }
-            String median=newText.medianString(dna, k);
+            //Testing if Data was read correctly:
+            System.out.println(text);
+            System.out.println(k);
+            for(int i=0;i<4;i++){
+                for(int j=0;j<k;j++){
+                    System.out.print(profileMatrix[i][j]);
+                    System.out.print("\t");
+                }
+                System.out.println("");
+            }
             
-            out.print(median);
+            String mostProbable=newText.profileMostProbableKmer(text, k, profileMatrix);
             
-          
+            out.print(mostProbable);
+            
             out.close();
         
         }
