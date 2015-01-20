@@ -385,7 +385,7 @@ public class Bioinformatics {
     public void reverseText(){
      reverseText=reverseComplement(text);
     }
-    public static String reverseComplement(String forwardStrand){
+    public String reverseComplement(String forwardStrand){
         StringBuilder reverseStrand=new StringBuilder();
         char base;
         for(int i=forwardStrand.length()-1;i>=0;i--){
@@ -551,26 +551,33 @@ public class Bioinformatics {
             //Storing inputs in list inputs
             List inputs= new ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_1h.txt");
+            File newFile=new File("rosalind_3b.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
             while ((line = reader.readLine()) != null) {
              inputs.add(line);
             }
+            
             //Creating PrintWriter for writing to output file
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             //Creating new Object to handle this string
             
-            
             Bioinformatics2 newText=new Bioinformatics2();
-            List neighbours=newText.neighbours("CCTAATACC", 3);
-            
-            for(Object text:neighbours){
-                out.println(text);
+            int k=Integer.parseInt(inputs.get(0).toString());
+            List dna= new ArrayList();
+            for(int i=1;i<inputs.size();i++){
+              dna.add(inputs.get(i).toString());
             }
+            String median=newText.medianString(dna, k);
+            
+            out.print(median);
+            
+          
             out.close();
+        
         }
+        
         catch(Exception e)
         {
          e.printStackTrace();

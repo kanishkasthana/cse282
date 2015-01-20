@@ -48,6 +48,108 @@ public class Bioinformatics2 extends Bioinformatics {
         return neighbourhood;
     }
     
+    public List motifEnumeration(List dna,int k, int d){
+        List patterns= new ArrayList();
+        String kmer,pattern;
+        List kmerneighbours;
+        int presentlocally,presentglobally;
+        for(Object str:dna){
+            for(int i=0;i<=str.toString().length()-k;i++){
+               kmer=str.toString().substring(i,i+k);
+               kmerneighbours=neighbours(kmer,d);
+               for(Object kmerd:kmerneighbours){ 
+                  presentglobally=0;
+                   for(Object str2:dna){
+                    presentlocally=0; 
+                    //Traversing through each DNA string one at a time
+                    for(int j=0; j<=str2.toString().length()-k;j++){
+                        pattern=str2.toString().substring(j,j+k);
+                        if(hammingDistance(pattern,kmerd.toString())<=d){
+                          presentlocally=1;
+                        }
+                    }
+                    
+                    if(presentlocally==0){
+                        presentglobally=0;
+                        break;
+                    }
+                    else{
+                        presentglobally=1;
+                    }
+                 
+                  }
+                   
+                 if(presentglobally==1){
+                     patterns.add(kmerd.toString());
+                 }
+               }
+               
+               
+            }
+        }
+        
+        
+        patterns=removeDuplicates(patterns);
+        
+        return patterns;
+    }
+    
+    public List removeDuplicates(List frequentPatterns){
+     
+    List uniqueElements=new ArrayList(); 
+    Object tempPattern;
+    int present;
+        for (Object pattern : frequentPatterns) {
+            present=0;
+            tempPattern=pattern;
+            for (Object pattern1 : uniqueElements) {
+              if(pattern1.equals(tempPattern))
+              {
+               present=1;
+               break;
+              }
+            }
+            if(present==0)
+                uniqueElements.add(tempPattern);
+        }
+        
+        return(uniqueElements);
+        
+    }
+    
+    public int distanceBetweenPatternAndStrings(String pattern,List dna){
+        int distance=0,k=pattern.length();
+        int hammingDistance=k;
+        String kmer;
+        for(Object text:dna){
+            hammingDistance=k;
+            for(int i=0;i<=text.toString().length()-k;i++){
+                kmer=text.toString().substring(i,i+k);
+                if(hammingDistance>hammingDistance(kmer,pattern)){
+                    hammingDistance=hammingDistance(kmer,pattern);
+                }
+            }
+            distance+=hammingDistance;
+        }
+        return distance;
+    }
+    
+    public String medianString(List dna,int k){
+       String median = null,pattern;
+       int distance=dna.size()*k;
+       int end=power(4,k),i,j;
+       
+       for(i=0;i<=end-1;i++){
+           pattern=numberToPattern(i,k);
+           if(distance>distanceBetweenPatternAndStrings(pattern,dna)){
+               distance=distanceBetweenPatternAndStrings(pattern,dna);
+               median=pattern;
+           }
+       }
+       
+       return median;
+    }
+    
     public static void main2(){
          
     
