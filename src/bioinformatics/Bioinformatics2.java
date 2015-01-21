@@ -237,6 +237,45 @@ public class Bioinformatics2 extends Bioinformatics {
         return bestMotifs;
     }
     
+    public String[] greedyMotifSearchWithPseudocounts(List dna,int k, int t){
+        String[] bestMotifs= new String[t];
+        String[] motifs=new String[t];
+        double[][] profileMatrix;
+        String firstString;
+        
+        for(int i=0;i<t;i++){
+            bestMotifs[i]=dna.get(i).toString().substring(0,0+k);
+        }
+        
+        double minscore=score(bestMotifs);
+        
+        firstString=dna.get(0).toString();
+        
+        for(int i=0;i<=firstString.length()-k;i++){
+            motifs[0]=firstString.substring(i,i+k);
+            for(int j=1;j<t;j++){
+                List mtfs=new ArrayList();
+                for(int l=0;l<j;l++)
+                    mtfs.add(motifs[l]);
+                profileMatrix=formProfileMatrixWithPseudocounts(mtfs,k);
+                motifs[j]=profileMostProbableKmer(dna.get(j).toString(), k, profileMatrix);
+            }
+           
+           if(score(motifs)<minscore){
+               minscore=score(motifs);
+           
+            for(int count=0;count<t;count++){
+                bestMotifs[count]=motifs[count];
+            }
+            
+              
+           }
+           
+       }   
+
+        return bestMotifs;
+    }
+    
     public double[][] formProfileMatrix(List motifs,int k){
         double[][] profileMatrix= new double[4][k];
         double[][] countMatrix=new double[4][k];
@@ -263,6 +302,45 @@ public class Bioinformatics2 extends Bioinformatics {
         for(int j=0;j<k;j++){
            for(int i=0;i<4;i++){
                profileMatrix[i][j]=countMatrix[i][j]/t;
+           }  
+        }
+        return profileMatrix;
+    }
+    
+    public double[][] formProfileMatrixWithPseudocounts(List motifs,int k){
+        double[][] profileMatrix= new double[4][k];
+        double[][] countMatrix=new double[4][k];
+        
+        for(int j=0;j<k;j++){
+            for(int i=0;i<4;i++){
+                profileMatrix[i][j]=0.0;
+                countMatrix[i][j]=0.0;
+            }
+        }
+        
+        int row;
+        String motif;
+        for(int j=0;j<k;j++){
+            for(int i=0;i<motifs.size();i++){
+                motif=motifs.get(i).toString();
+                row=symbolToNumber(motif.charAt(j));
+                countMatrix[row][j]+=1;
+            }
+        }
+        //Adding Pseudocounts
+        for(int j=0;j<k;j++){
+            for(int i=0;i<4;i++){
+             countMatrix[i][j]+=1; 
+            }    
+        }
+        //Creating Profile Matrix from Count Matrix will divide counts by total
+        //number of motifs to get probabilities
+        double t=motifs.size();
+        
+        for(int j=0;j<k;j++){
+           for(int i=0;i<4;i++){
+               //Modifying division to account for pseudocounts
+               profileMatrix[i][j]=countMatrix[i][j]/(t+4);
            }  
         }
         return profileMatrix;
