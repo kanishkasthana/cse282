@@ -551,7 +551,7 @@ public class Bioinformatics {
             //Storing inputs in list inputs
             List inputs= new ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_3c.txt");
+            File newFile=new File("dataset_159_5.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -564,30 +564,31 @@ public class Bioinformatics {
             //Creating new Object to handle this string
             
             Bioinformatics2 newText=new Bioinformatics2();
-            String text=inputs.get(0).toString();
-            int k=Integer.parseInt(inputs.get(1).toString());
-            double[][] profileMatrix= new double[4][k];
-            for(int i=0;i<4;i++){
-               StringTokenizer currentRow= new StringTokenizer(inputs.get(2+i).toString());
-               for(int j=0;j<k;j++){
-                   profileMatrix[i][j]=Double.parseDouble(currentRow.nextToken());
-               }
+            StringTokenizer kAndT=new StringTokenizer(inputs.get(0).toString());
+            int k=Integer.parseInt(kAndT.nextToken());
+            int t=Integer.parseInt(kAndT.nextToken());
+            List dna= new ArrayList();
+            
+            for(int i=0;i<t;i++){
+               dna.add(inputs.get(1+i).toString());
             }
-            //Testing if Data was read correctly:
-            System.out.println(text);
-            System.out.println(k);
+            
+            String[] bestMotifs=newText.greedyMotifSearch(dna, k, t);
+
+            for(int i=0;i<t;i++){
+                out.println(bestMotifs[i]);
+            }
+            //Testing profile Matrix formation
+            List motifs=Arrays.asList("TCGT","ATGC","CAGT","AAAT");
+            double[][] profileMatrix=newText.formProfileMatrix(motifs, 4);
+            
             for(int i=0;i<4;i++){
-                for(int j=0;j<k;j++){
+                for(int j=0;j<4;j++){
                     System.out.print(profileMatrix[i][j]);
-                    System.out.print("\t");
+                    System.out.print('\t');
                 }
                 System.out.println("");
             }
-            
-            String mostProbable=newText.profileMostProbableKmer(text, k, profileMatrix);
-            
-            out.print(mostProbable);
-            
             out.close();
         
         }

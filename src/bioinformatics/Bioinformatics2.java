@@ -197,6 +197,57 @@ public class Bioinformatics2 extends Bioinformatics {
         return patternProbability;
     }
     
+  
+    public String[] greedyMotifSearch(List dna,int k, int t){
+        String[] bestMotifs= new String[t];
+        String[] motifs=new String[t];
+        String pattern,firstString;
+        for(int i=0;i<t;i++){
+            bestMotifs[i]=dna.get(i).toString().substring(0,0+k);
+        }
+        firstString=dna.get(0).toString();
+        for(int i=0;i<=firstString.length()-k;i++){
+            motifs[0]=firstString.substring(i,i+k);
+            for(int j=1;j<t;j++){
+                
+            }
+        }
+        
+        return bestMotifs;
+    }
+    
+    public double[][] formProfileMatrix(List motifs,int k){
+        double[][] profileMatrix= new double[4][k];
+        double[][] countMatrix=new double[4][k];
+        
+        for(int j=0;j<k;j++){
+            for(int i=0;i<4;i++){
+                profileMatrix[i][j]=0.0;
+                countMatrix[i][j]=0.0;
+            }
+        }
+        
+        int row;
+        String motif;
+        for(int j=0;j<k;j++){
+            for(int i=0;i<motifs.size();i++){
+                motif=motifs.get(i).toString();
+                row=symbolToNumber(motif.charAt(j));
+                countMatrix[row][j]+=1;
+            }
+        }
+        //Creating Profile Matrix from Count Matrix will divide counts by total
+        //number of motifs to get probabilities
+        double t=motifs.size();
+        for(int j=0;j<k;j++){
+           for(int i=0;i<4;i++){
+               profileMatrix[i][j]=countMatrix[i][j]/t;
+           }  
+        }
+        
+        return profileMatrix;
+    }
+    //They want you to use existing code, this is how it will be usefull, interesting.0
     public static void main2(){
          
     
