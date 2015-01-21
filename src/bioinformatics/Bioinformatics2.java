@@ -201,18 +201,39 @@ public class Bioinformatics2 extends Bioinformatics {
     public String[] greedyMotifSearch(List dna,int k, int t){
         String[] bestMotifs= new String[t];
         String[] motifs=new String[t];
-        String pattern,firstString;
+        double[][] profileMatrix;
+        String firstString;
+        
         for(int i=0;i<t;i++){
             bestMotifs[i]=dna.get(i).toString().substring(0,0+k);
         }
+        
+        double minscore=score(bestMotifs);
+        
         firstString=dna.get(0).toString();
+        
         for(int i=0;i<=firstString.length()-k;i++){
             motifs[0]=firstString.substring(i,i+k);
             for(int j=1;j<t;j++){
-                
+                List mtfs=new ArrayList();
+                for(int l=0;l<j;l++)
+                    mtfs.add(motifs[l]);
+                profileMatrix=formProfileMatrix(mtfs,k);
+                motifs[j]=profileMostProbableKmer(dna.get(j).toString(), k, profileMatrix);
             }
-        }
-        
+           
+           if(score(motifs)<minscore){
+               minscore=score(motifs);
+           
+            for(int count=0;count<t;count++){
+                bestMotifs[count]=motifs[count];
+            }
+            
+              
+           }
+           
+       }   
+
         return bestMotifs;
     }
     
@@ -244,10 +265,32 @@ public class Bioinformatics2 extends Bioinformatics {
                profileMatrix[i][j]=countMatrix[i][j]/t;
            }  
         }
-        
         return profileMatrix;
     }
-    //They want you to use existing code, this is how it will be usefull, interesting.0
+    
+    //Devising way to calculate scores from profile matrix
+    public double score(String[] motifs){
+        double score=0.0;
+        List mtfs=new ArrayList();
+        int k=motifs[0].length();
+        for(int i=0;i<motifs.length;i++){
+            mtfs.add(motifs[i]);
+        }
+        double[][] profileMatrix=formProfileMatrix(mtfs,k);
+        double[] scores=new double[k];
+        double[] column=new double[4];
+        double maxColumn;
+        for(int j=0;j<k;j++){
+            for(int i=0;i<4;i++){
+                column[i]=profileMatrix[i][j];
+            }
+            maxColumn=maximum(column);
+            scores[j]=(1.0-maxColumn)*motifs.length;
+            score+=scores[j];
+        }
+        return score;
+    }
+    
     public static void main2(){
          
     
