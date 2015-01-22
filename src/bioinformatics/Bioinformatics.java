@@ -551,7 +551,7 @@ public class Bioinformatics {
             //Storing inputs in list inputs
             List inputs= new ArrayList();
             //Reading downloaded file
-            File newFile=new File("dataset_161_5.txt");
+            File newFile=new File("rosalind_3g.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -564,23 +564,22 @@ public class Bioinformatics {
             //Creating new Object to handle this string
             
             Bioinformatics2 newText=new Bioinformatics2();
-            StringTokenizer kAndT=new StringTokenizer(inputs.get(0).toString());
-            int k=Integer.parseInt(kAndT.nextToken());
-            int t=Integer.parseInt(kAndT.nextToken());
+            StringTokenizer ktn=new StringTokenizer(inputs.get(0).toString());
+            int k=Integer.parseInt(ktn.nextToken());
+            int t=Integer.parseInt(ktn.nextToken());
+            int n=Integer.parseInt(ktn.nextToken());
             List dna= new ArrayList();
             
             for(int i=0;i<t;i++){
                dna.add(inputs.get(1+i).toString());
             }
             
-            String[] bestMotifs=newText.runRandomizedMotifSearch(dna, k, t,2000);
+            String[] bestMotifs=newText.runGibbsSampler(dna, k, t,n,20);
             
             for(int i=0;i<bestMotifs.length;i++){
                 out.println(bestMotifs[i]);
             }
             
-            
-
             out.close();
         
         }

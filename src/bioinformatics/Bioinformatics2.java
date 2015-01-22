@@ -460,60 +460,112 @@ public class Bioinformatics2 extends Bioinformatics {
         }
     }
     
-    public String[] test(List dna,int k, int t){
-        double[][] profileMatrix1,profileMatrix2,profileMatrix3,profileMatrix4,profileMatrix5;
+   
+    public String[] gibbsSampler(List dna,int k,int t, int n){
+
         String[] bestMotifs=new String[t];
         Random random= new Random();
         String[] motifs= new String[t];
         String text;
         int rndnum;
         //Getting motifs with random starting positions
-        for(int count=0;count<t;count++){
-          text=dna.get(count).toString();
+        for(int i=0;i<t;i++){
+          text=dna.get(i).toString();
           rndnum=random.nextInt(text.length()-k+1);
-          motifs[count]=text.substring(rndnum,rndnum+k);
+          motifs[i]=text.substring(rndnum,rndnum+k);
         }
-        //bestMotifs now stores values stored in motifs
-
-        for(int count=0;count<t;count++){
-            System.out.println(motifs[count]);
-        }
-        
+        //Copying values of motifs into bestMotifs
         for(int i=0;i<t;i++){
             bestMotifs[i]=motifs[i];
         }
-        System.out.println(score(motifs));
         
-        profileMatrix1=formProfileMatrixWithPseudocounts(motifs, k);           
-            for(int n=0;n<t;n++){
-                motifs[n]=profileMostProbableKmer(dna.get(n).toString(),k,profileMatrix1);
+        for(int j=0;j<n;j++){
+            int i=random.nextInt(t);
+            List tempMotifs=new ArrayList();
+            //Gettting all motifs except motif i
+            for(int count=0;count<t;count++)
+                if(count!=i)
+                    tempMotifs.add(motifs[count]);
+            double[][] profileMatrix=formProfileMatrixWithPseudocounts(convertListToStringArray(tempMotifs),k);
+            motifs[i]=profileRandomlyGeneratedKmer(profileMatrix,k,i,dna);
+            
+            if(score(motifs)<score(bestMotifs)){
+                for(int count=0;count<t;count++){
+                    bestMotifs[count]=motifs[count];
+                }
+              
+            }    
+            
+        }
+
+        
+        return bestMotifs;
+    }
+    
+    public String profileRandomlyGeneratedKmer(double[][] profileMatrix,int k,int i,List dna){
+        String randomKmer=null;
+        String text=dna.get(i).toString();
+        int n=text.length()-k+1;
+        double[] patternProbabilities= new double[n];
+        String pattern;
+        for(int count=0;count<n;count++){
+            pattern=text.substring(count,count+k);
+            patternProbabilities[count]=patternProbability(pattern,profileMatrix);
+        }
+        double probabilitySum=0.0;
+        for(int j=0;j<n;j++){
+            probabilitySum+=patternProbabilities[j];
+        }
+        double[] normalizedPatternProbabilities= new double[n];
+        for(int j=0;j<n;j++){
+            normalizedPatternProbabilities[j]=patternProbabilities[j]/probabilitySum;
+        }
+        
+        int pos=improvedRandom(normalizedPatternProbabilities,n);
+        
+        randomKmer=text.substring(pos,pos+k);
+        
+        return randomKmer;
+    }
+    
+    public int improvedRandom(double[] normalizedPatternProbabilities,int n){
+        int i=0,pos=0;
+        boolean next;
+        
+        double[] cumulativeProbabilities=new double[n];
+        cumulativeProbabilities[0]=normalizedPatternProbabilities[0];
+        
+        for(int j=1;j<n;j++){
+            cumulativeProbabilities[j]=normalizedPatternProbabilities[j]+cumulativeProbabilities[j-1];
+        }
+        double randomNumber=Math.random();
+        do{
+            next=false;
+            if(randomNumber<=cumulativeProbabilities[i]){
+                pos=i;
+                break;
             }
-        System.out.println(score(motifs));
-        
-        profileMatrix2=formProfileMatrixWithPseudocounts(motifs, k);           
-            for(int n=0;n<t;n++){
-                motifs[n]=profileMostProbableKmer(dna.get(n).toString(),k,profileMatrix2);
+            else{
+                next=true;
+                i++;
             }
-        System.out.println(score(motifs));
+            
+        }while(next==true);
         
-        profileMatrix3=formProfileMatrixWithPseudocounts(motifs, k);           
-            for(int n=0;n<t;n++){
-                motifs[n]=profileMostProbableKmer(dna.get(n).toString(),k,profileMatrix3);
+        return pos;        
+    }
+    
+    public String[] runGibbsSampler(List dna, int k,int t,int n,int iterations){
+        String bestMotifs[]=gibbsSampler(dna,k,t,n);
+        String motifs[];
+        for(int i=0;i<iterations;i++){
+            motifs=gibbsSampler(dna,k,t,n);
+            if(score(motifs)<score(bestMotifs)){
+                for(int count=0;count<t;count++){
+                        bestMotifs[count]=motifs[count];
+                }
             }
-        System.out.println(score(motifs));
-        
-        profileMatrix4=formProfileMatrixWithPseudocounts(motifs, k);           
-            for(int n=0;n<t;n++){
-                motifs[n]=profileMostProbableKmer(dna.get(n).toString(),k,profileMatrix4);
-            }
-        System.out.println(score(motifs));
-        
-        profileMatrix5=formProfileMatrixWithPseudocounts(motifs, k);           
-            for(int n=0;n<t;n++){
-                motifs[n]=profileMostProbableKmer(dna.get(n).toString(),k,profileMatrix5);
-            }
-        System.out.println(score(motifs));
-        
+        }
         return bestMotifs;
     }
     
