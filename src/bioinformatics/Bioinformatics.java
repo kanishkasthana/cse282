@@ -573,16 +573,14 @@ public class Bioinformatics {
                dna.add(inputs.get(1+i).toString());
             }
             
-            k=8;
-            t=5;
-            dna=Arrays.asList("CGCCCCTCTCGGGGGTGTTCAGTAAACGGCCA","GGGCGAGGTATGTGTAAGTGCCAAGGTGCCAG","TAGTACCGAGACCGAAAGAAGTATACAGGCGT","TAGATCAAGTTTCAGGTGCACGTCGGTGAACC","AATCCACCAGCTCCACGTGCAATGTTGGCCTA");
-            
-            String[] bestMotifs=newText.randomizedMotifSearch(dna, k, t);
+            String[] bestMotifs=newText.runRandomizedMotifSearch(dna, k, t,2000);
             
             for(int i=0;i<bestMotifs.length;i++){
-                System.out.println(bestMotifs[i]);
+                out.println(bestMotifs[i]);
             }
             
+            
+
             out.close();
         
         }

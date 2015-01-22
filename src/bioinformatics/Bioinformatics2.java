@@ -215,10 +215,7 @@ public class Bioinformatics2 extends Bioinformatics {
         for(int i=0;i<=firstString.length()-k;i++){
             motifs[0]=firstString.substring(i,i+k);
             for(int j=1;j<t;j++){
-                List mtfs=new ArrayList();
-                for(int l=0;l<j;l++)
-                    mtfs.add(motifs[l]);
-                profileMatrix=formProfileMatrix(mtfs,k);
+                profileMatrix=formProfileMatrix(motifs,k);
                 motifs[j]=profileMostProbableKmer(dna.get(j).toString(), k, profileMatrix);
             }
            
@@ -254,10 +251,7 @@ public class Bioinformatics2 extends Bioinformatics {
         for(int i=0;i<=firstString.length()-k;i++){
             motifs[0]=firstString.substring(i,i+k);
             for(int j=1;j<t;j++){
-                List mtfs=new ArrayList();
-                for(int l=0;l<j;l++)
-                    mtfs.add(motifs[l]);
-                profileMatrix=formProfileMatrixWithPseudocounts(mtfs,k);
+                profileMatrix=formProfileMatrixWithPseudocounts(motifs,k);
                 motifs[j]=profileMostProbableKmer(dna.get(j).toString(), k, profileMatrix);
             }
            
@@ -276,7 +270,7 @@ public class Bioinformatics2 extends Bioinformatics {
         return bestMotifs;
     }
     
-    public double[][] formProfileMatrix(List motifs,int k){
+    public double[][] formProfileMatrix(String[] motifs,int k){
         double[][] profileMatrix= new double[4][k];
         double[][] countMatrix=new double[4][k];
         
@@ -290,15 +284,15 @@ public class Bioinformatics2 extends Bioinformatics {
         int row;
         String motif;
         for(int j=0;j<k;j++){
-            for(int i=0;i<motifs.size();i++){
-                motif=motifs.get(i).toString();
+            for(int i=0;i<motifs.length;i++){
+                motif=motifs[i];
                 row=symbolToNumber(motif.charAt(j));
                 countMatrix[row][j]+=1;
             }
         }
         //Creating Profile Matrix from Count Matrix will divide counts by total
         //number of motifs to get probabilities
-        double t=motifs.size();
+        double t=motifs.length;
         for(int j=0;j<k;j++){
            for(int i=0;i<4;i++){
                profileMatrix[i][j]=countMatrix[i][j]/t;
@@ -307,7 +301,7 @@ public class Bioinformatics2 extends Bioinformatics {
         return profileMatrix;
     }
     
-    public double[][] formProfileMatrixWithPseudocounts(List motifs,int k){
+    public double[][] formProfileMatrixWithPseudocounts(String[] motifs,int k){
         double[][] profileMatrix= new double[4][k];
         double[][] countMatrix=new double[4][k];
         
@@ -321,8 +315,8 @@ public class Bioinformatics2 extends Bioinformatics {
         int row;
         String motif;
         for(int j=0;j<k;j++){
-            for(int i=0;i<motifs.size();i++){
-                motif=motifs.get(i).toString();
+            for(int i=0;i<motifs.length;i++){
+                motif=motifs[i];
                 row=symbolToNumber(motif.charAt(j));
                 countMatrix[row][j]+=1;
             }
@@ -335,7 +329,7 @@ public class Bioinformatics2 extends Bioinformatics {
         }
         //Creating Profile Matrix from Count Matrix will divide counts by total
         //number of motifs to get probabilities
-        double t=motifs.size();
+        double t=motifs.length;
         
         for(int j=0;j<k;j++){
            for(int i=0;i<4;i++){
@@ -349,12 +343,8 @@ public class Bioinformatics2 extends Bioinformatics {
     //Devising way to calculate scores from profile matrix
     public double score(String[] motifs){
         double score=0.0;
-        List mtfs=new ArrayList();
         int k=motifs[0].length();
-        for(int i=0;i<motifs.length;i++){
-            mtfs.add(motifs[i]);
-        }
-        double[][] profileMatrix=formProfileMatrix(mtfs,k);
+        double[][] profileMatrix=formProfileMatrix(motifs,k);
         double[] scores=new double[k];
         double[] column=new double[4];
         double maxColumn;
@@ -372,7 +362,7 @@ public class Bioinformatics2 extends Bioinformatics {
     public double score(List motifs){
         double score=0.0;
         int k=motifs.get(0).toString().length();
-        double[][] profileMatrix=formProfileMatrix(motifs,k);
+        double[][] profileMatrix=formProfileMatrix(convertListToStringArray(motifs),k);
         double[] scores=new double[k];
         double[] column=new double[4];
         double maxColumn;
@@ -410,40 +400,39 @@ public class Bioinformatics2 extends Bioinformatics {
           rndnum=random.nextInt(text.length()-k+1);
           motifs[i]=text.substring(rndnum,rndnum+k);
         }
-        //bestMotifs now stores values stored in motifs
-
-        for(int i=0;i<t;i++){
-            System.out.println(motifs[i]);
-        }
         
         for(int i=0;i<t;i++){
             bestMotifs[i]=motifs[i];
         }
-        System.out.println(score(motifs));
         
-        for(int i=0;i<5;i++){
-            
-            profileMatrix=formProfileMatrixWithPseudocounts(convertStringArrayToList(motifs), k);
-            printMatrix(profileMatrix,k);
-            System.out.println("");
+        while(true){    
+            profileMatrix=formProfileMatrixWithPseudocounts(motifs, k);
             motifs=formMotifs(profileMatrix,k,dna);
-            
-             for(int l=0;l<t;l++){
-                System.out.println(motifs[l]);
-                }
-
-            System.out.print(score(motifs));
-            System.out.print(":");
             if(score(motifs)<score(bestMotifs)){
                     for(int count=0;count<t;count++){
                         bestMotifs[count]=motifs[count];
                     }
             }
-            System.out.println(score(bestMotifs));
-                    
+            else
+                return bestMotifs;        
+        }
+      
+    }
+
+    public String[] runRandomizedMotifSearch(List dna, int k,int t,int iterations){
+        String bestMotifs[]=randomizedMotifSearch(dna,k,t);
+        String motifs[];
+        for(int i=0;i<iterations;i++){
+            motifs=randomizedMotifSearch(dna,k,t);
+            if(score(motifs)<score(bestMotifs)){
+                for(int count=0;count<t;count++){
+                        bestMotifs[count]=motifs[count];
+                }
+            }
         }
         return bestMotifs;
     }
+    
     
     public String[] convertListToStringArray(List l){
         String[] array=new String[l.size()];
@@ -469,6 +458,63 @@ public class Bioinformatics2 extends Bioinformatics {
             }
             System.out.println("");
         }
+    }
+    
+    public String[] test(List dna,int k, int t){
+        double[][] profileMatrix1,profileMatrix2,profileMatrix3,profileMatrix4,profileMatrix5;
+        String[] bestMotifs=new String[t];
+        Random random= new Random();
+        String[] motifs= new String[t];
+        String text;
+        int rndnum;
+        //Getting motifs with random starting positions
+        for(int count=0;count<t;count++){
+          text=dna.get(count).toString();
+          rndnum=random.nextInt(text.length()-k+1);
+          motifs[count]=text.substring(rndnum,rndnum+k);
+        }
+        //bestMotifs now stores values stored in motifs
+
+        for(int count=0;count<t;count++){
+            System.out.println(motifs[count]);
+        }
+        
+        for(int i=0;i<t;i++){
+            bestMotifs[i]=motifs[i];
+        }
+        System.out.println(score(motifs));
+        
+        profileMatrix1=formProfileMatrixWithPseudocounts(motifs, k);           
+            for(int n=0;n<t;n++){
+                motifs[n]=profileMostProbableKmer(dna.get(n).toString(),k,profileMatrix1);
+            }
+        System.out.println(score(motifs));
+        
+        profileMatrix2=formProfileMatrixWithPseudocounts(motifs, k);           
+            for(int n=0;n<t;n++){
+                motifs[n]=profileMostProbableKmer(dna.get(n).toString(),k,profileMatrix2);
+            }
+        System.out.println(score(motifs));
+        
+        profileMatrix3=formProfileMatrixWithPseudocounts(motifs, k);           
+            for(int n=0;n<t;n++){
+                motifs[n]=profileMostProbableKmer(dna.get(n).toString(),k,profileMatrix3);
+            }
+        System.out.println(score(motifs));
+        
+        profileMatrix4=formProfileMatrixWithPseudocounts(motifs, k);           
+            for(int n=0;n<t;n++){
+                motifs[n]=profileMostProbableKmer(dna.get(n).toString(),k,profileMatrix4);
+            }
+        System.out.println(score(motifs));
+        
+        profileMatrix5=formProfileMatrixWithPseudocounts(motifs, k);           
+            for(int n=0;n<t;n++){
+                motifs[n]=profileMostProbableKmer(dna.get(n).toString(),k,profileMatrix5);
+            }
+        System.out.println(score(motifs));
+        
+        return bestMotifs;
     }
     
     public static void main2(){
