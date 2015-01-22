@@ -551,7 +551,7 @@ public class Bioinformatics {
             //Storing inputs in list inputs
             List inputs= new ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_3e.txt");
+            File newFile=new File("dataset_161_5.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -573,11 +573,16 @@ public class Bioinformatics {
                dna.add(inputs.get(1+i).toString());
             }
             
-            String[] bestMotifs=newText.greedyMotifSearchWithPseudocounts(dna, k, t);
-            for(int i=0;i<t;i++){
-                out.println(bestMotifs[i]);
+            k=8;
+            t=5;
+            dna=Arrays.asList("CGCCCCTCTCGGGGGTGTTCAGTAAACGGCCA","GGGCGAGGTATGTGTAAGTGCCAAGGTGCCAG","TAGTACCGAGACCGAAAGAAGTATACAGGCGT","TAGATCAAGTTTCAGGTGCACGTCGGTGAACC","AATCCACCAGCTCCACGTGCAATGTTGGCCTA");
+            
+            String[] bestMotifs=newText.randomizedMotifSearch(dna, k, t);
+            
+            for(int i=0;i<bestMotifs.length;i++){
+                System.out.println(bestMotifs[i]);
             }
- 
+            
             out.close();
         
         }

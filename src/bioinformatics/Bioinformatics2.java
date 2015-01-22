@@ -369,6 +369,108 @@ public class Bioinformatics2 extends Bioinformatics {
         return score;
     }
     
+    public double score(List motifs){
+        double score=0.0;
+        int k=motifs.get(0).toString().length();
+        double[][] profileMatrix=formProfileMatrix(motifs,k);
+        double[] scores=new double[k];
+        double[] column=new double[4];
+        double maxColumn;
+        for(int j=0;j<k;j++){
+            for(int i=0;i<4;i++){
+                column[i]=profileMatrix[i][j];
+            }
+            maxColumn=maximum(column);
+            scores[j]=(1.0-maxColumn)*motifs.size();
+            score+=scores[j];
+        }
+        return score;
+    }
+    
+    public String[] formMotifs(double[][] profileMatrix,int k,List dna){
+        String[] motifs=new String[dna.size()];
+        String pattern;
+        for(int i=0;i<dna.size();i++){
+            pattern=profileMostProbableKmer(dna.get(i).toString(), k, profileMatrix);
+            motifs[i]=pattern;
+        }
+        return motifs;
+    }
+    
+    public String[] randomizedMotifSearch(List dna,int k, int t){
+        double[][] profileMatrix;
+        String[] bestMotifs=new String[t];
+        Random random= new Random();
+        String[] motifs= new String[t];
+        String text;
+        int rndnum;
+        //Getting motifs with random starting positions
+        for(int i=0;i<t;i++){
+          text=dna.get(i).toString();
+          rndnum=random.nextInt(text.length()-k+1);
+          motifs[i]=text.substring(rndnum,rndnum+k);
+        }
+        //bestMotifs now stores values stored in motifs
+
+        for(int i=0;i<t;i++){
+            System.out.println(motifs[i]);
+        }
+        
+        for(int i=0;i<t;i++){
+            bestMotifs[i]=motifs[i];
+        }
+        System.out.println(score(motifs));
+        
+        for(int i=0;i<5;i++){
+            
+            profileMatrix=formProfileMatrixWithPseudocounts(convertStringArrayToList(motifs), k);
+            printMatrix(profileMatrix,k);
+            System.out.println("");
+            motifs=formMotifs(profileMatrix,k,dna);
+            
+             for(int l=0;l<t;l++){
+                System.out.println(motifs[l]);
+                }
+
+            System.out.print(score(motifs));
+            System.out.print(":");
+            if(score(motifs)<score(bestMotifs)){
+                    for(int count=0;count<t;count++){
+                        bestMotifs[count]=motifs[count];
+                    }
+            }
+            System.out.println(score(bestMotifs));
+                    
+        }
+        return bestMotifs;
+    }
+    
+    public String[] convertListToStringArray(List l){
+        String[] array=new String[l.size()];
+        for(int i=0;i<l.size();i++){
+            array[i]=l.get(i).toString();
+        }
+        return array;
+    }
+    
+    public List convertStringArrayToList(String[] array){
+        List l= new ArrayList();
+        for(int i=0;i<array.length;i++){
+            l.add(array[i]);
+        }
+        return l;
+    }
+    
+    public void printMatrix(double[][] matrix,int k){
+        for(int i=0;i<4;i++){
+            for(int j=0;j<k;j++){
+                System.out.print(matrix[i][j]);
+                System.out.print('\t');
+            }
+            System.out.println("");
+        }
+    }
+    
     public static void main2(){
          
     
