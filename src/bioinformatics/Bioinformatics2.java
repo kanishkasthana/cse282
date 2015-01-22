@@ -527,7 +527,7 @@ public class Bioinformatics2 extends Bioinformatics {
         
         return randomKmer;
     }
-    
+    //Method to get array positions using a weighted probability array.
     public int improvedRandom(double[] normalizedPatternProbabilities,int n){
         int i=0,pos=0;
         boolean next;
@@ -539,6 +539,7 @@ public class Bioinformatics2 extends Bioinformatics {
             cumulativeProbabilities[j]=normalizedPatternProbabilities[j]+cumulativeProbabilities[j-1];
         }
         double randomNumber=Math.random();
+        
         do{
             next=false;
             if(randomNumber<=cumulativeProbabilities[i]){
