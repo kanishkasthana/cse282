@@ -551,7 +551,7 @@ public class Bioinformatics {
             //Storing inputs in list inputs
             List inputs= new ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_3g.txt");
+            File newFile=new File("rosalind_5a.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -563,23 +563,16 @@ public class Bioinformatics {
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             //Creating new Object to handle this string
             
-            Bioinformatics2 newText=new Bioinformatics2();
-            StringTokenizer ktn=new StringTokenizer(inputs.get(0).toString());
-            int k=Integer.parseInt(ktn.nextToken());
-            int t=Integer.parseInt(ktn.nextToken());
-            int n=Integer.parseInt(ktn.nextToken());
-            List dna= new ArrayList();
-            
-            for(int i=0;i<t;i++){
-               dna.add(inputs.get(1+i).toString());
+            Bioinformatics3 newText=new Bioinformatics3();
+            int money= Integer.parseInt(inputs.get(0).toString());
+            StringTokenizer all_coins=new StringTokenizer(inputs.get(1).toString(),",");
+            int[] coins=new int[all_coins.countTokens()];
+            int i=all_coins.countTokens()-1;
+            while(all_coins.hasMoreElements()){
+              coins[i--]=Integer.parseInt(all_coins.nextToken());
             }
-            
-            String[] bestMotifs=newText.runGibbsSampler(dna, k, t,n,20);
-            
-            for(int i=0;i<bestMotifs.length;i++){
-                out.println(bestMotifs[i]);
-            }
-            
+            int answer=newText.dpChange(money, coins);
+            out.print(answer);
             out.close();
         
         }

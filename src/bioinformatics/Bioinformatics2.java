@@ -183,6 +183,7 @@ public class Bioinformatics2 extends Bioinformatics {
         mostProbable=text.substring(maxPosition,maxPosition+k);        
         
         return mostProbable;
+        
     }
     
     public double patternProbability(String pattern, double[][] profileMatrix){
@@ -569,10 +570,6 @@ public class Bioinformatics2 extends Bioinformatics {
         }
         return bestMotifs;
     }
-    
-    public static void main2(){
-         
-    
-    }
+   
     
 }
