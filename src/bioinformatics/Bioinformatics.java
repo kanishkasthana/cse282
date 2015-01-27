@@ -551,7 +551,7 @@ public class Bioinformatics {
             //Storing inputs in list inputs
             List inputs= new ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_5a.txt");
+            File newFile=new File("dataset_261_9.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -562,17 +562,48 @@ public class Bioinformatics {
             //Creating PrintWriter for writing to output file
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             //Creating new Object to handle this string
-            
+            int pos=0;
             Bioinformatics3 newText=new Bioinformatics3();
-            int money= Integer.parseInt(inputs.get(0).toString());
-            StringTokenizer all_coins=new StringTokenizer(inputs.get(1).toString(),",");
-            int[] coins=new int[all_coins.countTokens()];
-            int i=all_coins.countTokens()-1;
-            while(all_coins.hasMoreElements()){
-              coins[i--]=Integer.parseInt(all_coins.nextToken());
+            StringTokenizer nm=new StringTokenizer(inputs.get(pos++).toString());
+            int n=Integer.parseInt(nm.nextToken());
+            int m=Integer.parseInt(nm.nextToken());
+            int[][] down=new int[n][m+1];
+            int[][] right=new int[n+1][m];
+            for(int i=0;i<n;i++){
+                StringTokenizer l=new StringTokenizer(inputs.get(pos++).toString());
+                for(int j=0;j<=m;j++){
+                    down[i][j]=Integer.parseInt(l.nextToken());
+                }
             }
-            int answer=newText.dpChange(money, coins);
-            out.print(answer);
+            pos++;
+            for(int i=0;i<=n;i++){
+                StringTokenizer l=new StringTokenizer(inputs.get(pos++).toString());
+                for(int j=0;j<m;j++){
+                    right[i][j]=Integer.parseInt(l.nextToken());
+                }
+            }
+            //Testing output to see if data was read correctly
+            System.out.println(n);
+            System.out.println(m);
+            for(int i=0;i<n;i++){  
+                for(int j=0;j<=m;j++){
+                    System.out.print(down[i][j]);
+                    System.out.print(' ');
+                }
+                System.out.println("");
+            
+            }
+            System.out.println("");
+            
+            for(int i=0;i<=n;i++){  
+                for(int j=0;j<m;j++){
+                    System.out.print(right[i][j]);
+                    System.out.print(' ');
+                }
+                System.out.println("");
+            
+            }
+            
             out.close();
         
         }
