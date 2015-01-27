@@ -551,7 +551,7 @@ public class Bioinformatics {
             //Storing inputs in list inputs
             List inputs= new ArrayList();
             //Reading downloaded file
-            File newFile=new File("dataset_261_9.txt");
+            File newFile=new File("rosalind_5b.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -582,30 +582,10 @@ public class Bioinformatics {
                     right[i][j]=Integer.parseInt(l.nextToken());
                 }
             }
-            //Testing output to see if data was read correctly
-            System.out.println(n);
-            System.out.println(m);
-            for(int i=0;i<n;i++){  
-                for(int j=0;j<=m;j++){
-                    System.out.print(down[i][j]);
-                    System.out.print(' ');
-                }
-                System.out.println("");
             
-            }
-            System.out.println("");
-            
-            for(int i=0;i<=n;i++){  
-                for(int j=0;j<m;j++){
-                    System.out.print(right[i][j]);
-                    System.out.print(' ');
-                }
-                System.out.println("");
-            
-            }
             int answer=newText.manhattanTourist(n, m, down, right);
+            out.println(answer);
             out.close();
-        
         }
         
         catch(Exception e)

@@ -48,17 +48,6 @@ public class Bioinformatics3 extends Bioinformatics2{
               s[i][j]=max(s[i-1][j]+down[i-1][j],s[i][j-1]+right[i][j-1]);  
             }
         }
-        
-        //Printing to check if procedure was successful
-        System.out.println("");
-        for(int i=0;i<=n;i++){
-            for(int j=0;j<=m;j++){
-                System.out.print(s[i][j]);
-                System.out.print('\t');
-            }
-            System.out.println("");
-        }
-            
         return s[n][m];
     }
 }
