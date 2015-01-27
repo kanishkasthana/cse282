@@ -603,7 +603,7 @@ public class Bioinformatics {
                 System.out.println("");
             
             }
-            
+            int answer=newText.manhattanTourist(n, m, down, right);
             out.close();
         
         }

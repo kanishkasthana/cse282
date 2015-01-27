@@ -25,4 +25,40 @@ public class Bioinformatics3 extends Bioinformatics2{
         return minNumCoins[money];
     }
     
+    public int max(int num1,int num2){
+        if(num1>num2)
+            return num1;
+        else 
+            return num2;
+    }
+    
+    public int manhattanTourist(int n, int m, int[][] down, int [][] right){
+        int[][] s=new int[n+1][m+1];
+        s[0][0]=0;
+        //Filling first Column
+        for(int i=1;i<=n;i++){
+            s[i][0]=s[i-1][0]+down[i-1][0];
+        }
+        //Filling First Row
+        for(int j=1;j<=m;j++){
+            s[0][j]=s[0][j-1]+right[0][j-1];
+        }
+        for(int i=1;i<=n;i++){
+            for(int j=1;j<=m;j++){
+              s[i][j]=max(s[i-1][j]+down[i-1][j],s[i][j-1]+right[i][j-1]);  
+            }
+        }
+        
+        //Printing to check if procedure was successful
+        System.out.println("");
+        for(int i=0;i<=n;i++){
+            for(int j=0;j<=m;j++){
+                System.out.print(s[i][j]);
+                System.out.print('\t');
+            }
+            System.out.println("");
+        }
+            
+        return s[n][m];
+    }
 }
