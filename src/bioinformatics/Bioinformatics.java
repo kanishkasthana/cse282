@@ -551,7 +551,7 @@ public class Bioinformatics {
             //Storing inputs in list inputs
             List inputs= new ArrayList();
             //Reading downloaded file
-            File newFile=new File("testdata.txt");
+            File newFile=new File("rosalind_5d.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -594,38 +594,46 @@ public class Bioinformatics {
             List<node> nodes=Bioinformatics3.toList(allnodes);
             
             nodes=newText.stripEverythingButTheCore(nodes,maxnode,sinknode,sourcenode);
-            /*
-            int count=0;
-            for(int i=0;i<nodes.size();i++){
-                if(nodes.get(i).getChildren().isEmpty())
-                    count++;
+ 
+            List<node> adjacencyList=newText.getAdjacencyList(nodes);
+            for(int i=0;i<adjacencyList.size();i++){
+                System.out.println(adjacencyList.get(i).getNodeNumber());
             }
+
+            //Repopulating nodes:
+            alledges=new ArrayList();
+            for(int i=2;i<inputs.size();i++){
+                alledges.add(new edge(inputs.get(i).toString())); 
+            }
+            nodes=Bioinformatics3.toList(edge.allnodes);
+            nodes=newText.stripEverythingButTheCore(nodes,maxnode,sinknode,sourcenode);
             
-            System.out.println(count);
-            */
             for(int i=0;i<nodes.size();i++){
                 if(nodes.get(i).getParents().isEmpty()){
                     nodes.get(i).setScore(0);
                 }
             }
             
- 
-            List<node> adjacencyList=newText.getAdjacencyList(nodes);
-            for(int i=0;i<adjacencyList.size();i++){
-                System.out.println(adjacencyList.get(i).getNodeNumber());
-            }
             /*
-            //Repopulating nodes:
-            alledges=new ArrayList();
-            for(int i=2;i<inputs.size();i++){
-                alledges.add(new edge(inputs.get(i).toString())); 
+            int count=0;
+            for(int i=0;i<nodes.size();i++){
+                if(nodes.get(i).getParents().isEmpty())
+                    count++;
             }
+            
+            System.out.println(count);
+            */
+            node currentNode=null;
             
             for(int i=0;i<adjacencyList.size();i++){
                 adjacencyList.get(i).computeScores();
                 System.out.println(adjacencyList.get(i).getScore());
+                if(adjacencyList.get(i).getNodeNumber()==sinknode){
+                    currentNode=adjacencyList.get(i);
+                }
             }
-            node currentNode=allnodes[sinknode];
+            out.println(currentNode.getScore());
+
             List<node> backtrack=new <node>ArrayList();
             backtrack.add(currentNode);
 
@@ -641,18 +649,12 @@ public class Bioinformatics {
                          }
                      }
              }
-            
-            System.out.println("sinknode score:");
-            System.out.println(allnodes[sinknode].getChildren().size());
-            out.println(allnodes[sinknode].getScore());
-           
-            System.out.println("Backtrack:");
+                     
             out.print(backtrack.get(backtrack.size()-1).getNodeNumber());
             for(int i=backtrack.size()-2;i>=0;i--){
                 out.print("->");
                 out.print(backtrack.get(i).getNodeNumber());
             }
-            */
             out.close();
         }
         
