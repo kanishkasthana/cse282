@@ -551,7 +551,7 @@ public class Bioinformatics {
             //Storing inputs in list inputs
             List inputs= new ArrayList();
             //Reading downloaded file
-            File newFile=new File("dataset_245_7.txt");
+            File newFile=new File("testdata.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -590,26 +590,31 @@ public class Bioinformatics {
             for(int i=2;i<inputs.size();i++){
                 alledges.add(new edge(inputs.get(i).toString())); 
             }
+            
+            List<node> nodes=Bioinformatics3.toList(allnodes);
+            
+            nodes=newText.stripEverythingButTheCore(nodes,maxnode,sinknode,sourcenode);
+            /*
             int count=0;
-            for(int i=0;i<=maxnode;i++){
-                if(allnodes[i].getParents().isEmpty()){
+            for(int i=0;i<nodes.size();i++){
+                if(nodes.get(i).getChildren().isEmpty())
                     count++;
-                    allnodes[i].setScore(0);
+            }
+            
+            System.out.println(count);
+            */
+            for(int i=0;i<nodes.size();i++){
+                if(nodes.get(i).getParents().isEmpty()){
+                    nodes.get(i).setScore(0);
                 }
             }
-            System.out.println(count);
-            count=0;
-            for(int i=0;i<=maxnode;i++){
-                if(allnodes[i].getChildren().isEmpty()){
-                    count++;
-                }
-            }
-            System.out.println(count);
-            System.out.println("Count above");
-            List<node> adjacencyList=newText.getAdjacencyList(allnodes, sinknode, sourcenode,maxnode);
+            
+ 
+            List<node> adjacencyList=newText.getAdjacencyList(nodes);
             for(int i=0;i<adjacencyList.size();i++){
                 System.out.println(adjacencyList.get(i).getNodeNumber());
             }
+            /*
             //Repopulating nodes:
             alledges=new ArrayList();
             for(int i=2;i<inputs.size();i++){
@@ -620,12 +625,11 @@ public class Bioinformatics {
                 adjacencyList.get(i).computeScores();
                 System.out.println(adjacencyList.get(i).getScore());
             }
-            
             node currentNode=allnodes[sinknode];
             List<node> backtrack=new <node>ArrayList();
             backtrack.add(currentNode);
-            while(!currentNode.equals(allnodes[sourcenode])){
-            if(!currentNode.getParents().isEmpty()){
+
+            while(!currentNode.getParents().isEmpty()){
                      node[] parents=new node[currentNode.getParents().size()];
                      for(int i=0;i<currentNode.getParents().size();i++){
                          parents[i]=(node)currentNode.getParents().get(i);
@@ -637,17 +641,18 @@ public class Bioinformatics {
                          }
                      }
              }
-            }
+            
             System.out.println("sinknode score:");
             System.out.println(allnodes[sinknode].getChildren().size());
             out.println(allnodes[sinknode].getScore());
+           
             System.out.println("Backtrack:");
             out.print(backtrack.get(backtrack.size()-1).getNodeNumber());
             for(int i=backtrack.size()-2;i>=0;i--){
                 out.print("->");
                 out.print(backtrack.get(i).getNodeNumber());
             }
-            
+            */
             out.close();
         }
         
