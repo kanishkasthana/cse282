@@ -118,11 +118,11 @@ public class Bioinformatics3 extends Bioinformatics2{
         }
     }
     
-    public List getAdjacencyList(node[] allnodes,int sinknode,int sourcenode){
+    public List getAdjacencyList(node[] allnodes,int sinknode,int sourcenode,int maxnode){
         edge.alledges.clear();
         List<node> adjacencyList=new <node>ArrayList();
         List<node> candidates=new <node>ArrayList();
-        for(int i=0;i<=sinknode;i++){
+        for(int i=0;i<=maxnode;i++){
             if(allnodes[i].getParents().isEmpty()){
                 candidates.add(allnodes[i]);
             }
@@ -142,5 +142,9 @@ public class Bioinformatics3 extends Bioinformatics2{
         }
         
         return adjacencyList;
+    }
+    
+    public List stripEverythingButTheCore(List allnodes){
+        return allnodes;
     }
 }
