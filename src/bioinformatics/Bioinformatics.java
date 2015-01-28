@@ -551,7 +551,7 @@ public class Bioinformatics {
             //Storing inputs in list inputs
             List inputs= new ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_5b.txt");
+            File newFile=new File("rosalind_5c.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -562,29 +562,16 @@ public class Bioinformatics {
             //Creating PrintWriter for writing to output file
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             //Creating new Object to handle this string
+            StringBuilder output=new StringBuilder();
             int pos=0;
             Bioinformatics3 newText=new Bioinformatics3();
-            StringTokenizer nm=new StringTokenizer(inputs.get(pos++).toString());
-            int n=Integer.parseInt(nm.nextToken());
-            int m=Integer.parseInt(nm.nextToken());
-            int[][] down=new int[n][m+1];
-            int[][] right=new int[n+1][m];
-            for(int i=0;i<n;i++){
-                StringTokenizer l=new StringTokenizer(inputs.get(pos++).toString());
-                for(int j=0;j<=m;j++){
-                    down[i][j]=Integer.parseInt(l.nextToken());
-                }
-            }
-            pos++;
-            for(int i=0;i<=n;i++){
-                StringTokenizer l=new StringTokenizer(inputs.get(pos++).toString());
-                for(int j=0;j<m;j++){
-                    right[i][j]=Integer.parseInt(l.nextToken());
-                }
-            }
-            
-            int answer=newText.manhattanTourist(n, m, down, right);
-            out.println(answer);
+            String v=inputs.get(pos++).toString();
+            String w=inputs.get(pos++).toString();
+            //v="AACCTTGG";
+            //w="ACACTGTGA";
+            newText.outputLCS(newText.lcsBacktrack(v, w), v, v.length(), w.length(), output);
+            out.println(output.toString());
+            System.out.println(v.length()+" "+w.length()+" "+output.length());
             out.close();
         }
         
