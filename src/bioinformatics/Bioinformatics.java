@@ -363,7 +363,7 @@ public class Bioinformatics {
     }
     
     //Implementing bubble sort
-    public int[] sort(int[] array)
+    public static int[] sort(int[] array)
     {
     boolean swapped = true;
     int j = 0,temp;
@@ -551,7 +551,7 @@ public class Bioinformatics {
             //Storing inputs in list inputs
             List inputs= new ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_5c.txt");
+            File newFile=new File("dataset_245_7.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -565,13 +565,69 @@ public class Bioinformatics {
             StringBuilder output=new StringBuilder();
             int pos=0;
             Bioinformatics3 newText=new Bioinformatics3();
-            String v=inputs.get(pos++).toString();
-            String w=inputs.get(pos++).toString();
-            //v="AACCTTGG";
-            //w="ACACTGTGA";
-            newText.outputLCS(newText.lcsBacktrack(v, w), v, v.length(), w.length(), output);
-            out.println(output.toString());
-            System.out.println(v.length()+" "+w.length()+" "+output.length());
+            int sourcenode=Integer.parseInt(inputs.get(0).toString());
+            int sinknode=Integer.parseInt(inputs.get(1).toString());
+            node[] allnodes=new node[sinknode+1];
+            for(int i=0;i<=sinknode;i++){
+                allnodes[i]=new node(i);
+            }
+            
+            edge.allnodes=allnodes;
+            node.allnodes=allnodes;
+            List alledges=new ArrayList();
+            for(int i=2;i<inputs.size();i++){
+                alledges.add(new edge(inputs.get(i).toString())); 
+            }
+            int count=0;
+            for(int i=0;i<=sinknode;i++){
+                if(allnodes[i].getParents().isEmpty()){
+                    count++;
+                    allnodes[i].setScore(0);
+                }
+            }
+            System.out.println(count);
+            System.out.println("Count above");
+            List<node> adjacencyList=newText.getAdjacencyList(allnodes, sinknode, sourcenode);
+            for(int i=0;i<adjacencyList.size();i++){
+                System.out.println(adjacencyList.get(i).getNodeNumber());
+            }
+            //Repopulating nodes:
+            alledges=new ArrayList();
+            for(int i=2;i<inputs.size();i++){
+                alledges.add(new edge(inputs.get(i).toString())); 
+            }
+            
+            for(int i=0;i<adjacencyList.size();i++){
+                adjacencyList.get(i).computeScores();
+                System.out.println(adjacencyList.get(i).getScore());
+            }
+            
+            node currentNode=allnodes[sinknode];
+            List<node> backtrack=new <node>ArrayList();
+            backtrack.add(currentNode);
+            while(!currentNode.equals(allnodes[sourcenode])){
+                 if(!currentNode.getParents().isEmpty()){
+                     node[] parents=new node[currentNode.getParents().size()];
+                     for(int i=0;i<currentNode.getParents().size();i++){
+                         parents[i]=(node)currentNode.getParents().get(i);
+                         int score=parents[i].getScore()+currentNode.getEdge(parents[i]).getWeight();
+                         if(currentNode.getScore()==score){
+                             backtrack.add(parents[i]);
+                             currentNode=parents[i];
+                             break;
+                         }
+                     }
+                 }
+            
+            }
+            out.println(allnodes[sinknode].getScore());
+            System.out.println("Backtrack:");
+            out.print(backtrack.get(backtrack.size()-1).getNodeNumber());
+            for(int i=backtrack.size()-2;i>=0;i--){
+                out.print("->");
+                out.print(backtrack.get(i).getNodeNumber());
+            }
+            
             out.close();
         }
         

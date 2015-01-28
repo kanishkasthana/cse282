@@ -117,4 +117,30 @@ public class Bioinformatics3 extends Bioinformatics2{
             out.append(v.charAt(i-1));
         }
     }
+    
+    public List getAdjacencyList(node[] allnodes,int sinknode,int sourcenode){
+        edge.alledges.clear();
+        List<node> adjacencyList=new <node>ArrayList();
+        List<node> candidates=new <node>ArrayList();
+        for(int i=0;i<=sinknode;i++){
+            if(allnodes[i].getParents().isEmpty()){
+                candidates.add(allnodes[i]);
+            }
+        }
+        while(!candidates.isEmpty()){
+           node arbitary=candidates.get(0);
+           candidates.remove(arbitary);
+           adjacencyList.add(arbitary);
+           for(int i=0;i<arbitary.getChildren().size();i++){
+               node child=(node)arbitary.getChildren().get(i);
+               child.getParents().remove(arbitary);
+               if(child.getParents().isEmpty())
+                   candidates.add(child);
+           }
+           arbitary.getChildren().clear();
+           arbitary.getEdges().clear();
+        }
+        
+        return adjacencyList;
+    }
 }
