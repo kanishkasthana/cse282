@@ -552,7 +552,7 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_5d.txt");
+            File newFile=new File("rosalind_5e.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -569,20 +569,14 @@ public class Bioinformatics {
             
             StringTokenizer letters=new StringTokenizer(matrixInputs.get(0));
             List alphabets=new ArrayList();
+            //Reading in Alphabets
+            
             while(letters.hasMoreTokens())
             {
                 alphabets.add(letters.nextToken());
             }
-           
-            for(int i=0;i<matrixInputs.size();i++){
-                System.out.println(matrixInputs.get(i));
-            }
-     
-            for(int i=0;i<alphabets.size();i++){
-                System.out.println(alphabets.get(i).toString().charAt(0));
-            }
-            System.out.println(Bioinformatics3.getPos('Y',alphabets));
             
+            //Creating Scoring Matrix;
             int[][] scoringMatrix=new int[alphabets.size()][alphabets.size()];
             for(int i=1;i<matrixInputs.size();i++){
                 StringTokenizer row=new StringTokenizer(matrixInputs.get(i));
@@ -590,23 +584,20 @@ public class Bioinformatics {
                 int j=0;
                 while(row.hasMoreTokens()){
                     scoringMatrix[i-1][j++]=Integer.parseInt(row.nextToken().toString());
-                }
-                
+                }    
             }
             
-            for(int i=0;i<alphabets.size();i++){
-                System.out.println("");
-                for(int j=0;j<alphabets.size();j++){
-                    System.out.print(scoringMatrix[i][j]);
-                    System.out.print("\t");
-                }
-            }
-            
+            String firstProtein=inputs.get(0);
+            String secondProtein=inputs.get(1);
+            //firstProtein="PLEASANTLY";
+            //secondProtein="MEANLY";
+            int gapPenalty=5;
             //Creating PrintWriter for writing to output file
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             //Creating new Object to handle this string
             StringBuilder output=new StringBuilder();
             Bioinformatics3 newText=new Bioinformatics3();
+            int[][] s=newText.getAlignmentScores(firstProtein, secondProtein, scoringMatrix, alphabets, gapPenalty,out);
             
             out.close();
         }

@@ -103,6 +103,75 @@ public class Bioinformatics3 extends Bioinformatics2{
         return backtrack;
     }
     
+    public int[][] getAlignmentScores(String firstProtein,String secondProtein,int[][] scoringMatrix,List alphabets,int gapPenalty,PrintWriter out ){
+        int[][] backtrack = new int[firstProtein.length()+1][secondProtein.length()+1];
+        int[][] s=new int[firstProtein.length()+1][secondProtein.length()+1];
+        s[0][0]=0;
+        for(int i=1;i<=firstProtein.length();i++){
+            s[i][0]=s[i-1][0]-5;
+        }
+        for(int j=1;j<=secondProtein.length();j++){
+            s[0][j]=s[0][j-1]-5;
+        }
+        
+        for(int i=1;i<=firstProtein.length();i++){
+            for(int j=1;j<=secondProtein.length();j++){
+                char rowchar=firstProtein.charAt(i-1);
+                char columnchar=secondProtein.charAt(j-1);
+                int row=getPos(rowchar,alphabets);
+                int column=getPos(columnchar,alphabets);
+                int score=scoringMatrix[row][column];
+                s[i][j]=max(s[i-1][j]-gapPenalty,s[i][j-1]-gapPenalty,s[i-1][j-1]+score);
+                
+                if(s[i][j]==s[i-1][j]-gapPenalty){
+                    backtrack[i][j]=down;
+                }
+                else if(s[i][j]==s[i][j-1]-gapPenalty){
+                    backtrack[i][j]=right;
+                }
+                else if (s[i][j]==s[i-1][j-1]+score){
+                    backtrack[i][j]=diag;
+                }
+                
+            }
+        }
+        //outputing allignment score;
+        out.println(s[firstProtein.length()][secondProtein.length()]);
+        /*
+        for(int i=0;i<=firstProtein.length();i++){
+            for(int j=0;j<=secondProtein.length();j++){
+                System.out.print(s[i][j]);
+                System.out.print("\t");
+            }
+            System.out.println("");
+        }
+        */        
+        StringBuilder firstProteinAlign=new StringBuilder();
+        StringBuilder secondProteinAlign=new StringBuilder();
+        outputBacktrack(backtrack, firstProtein, secondProtein, firstProtein.length(),secondProtein.length(),firstProteinAlign,secondProteinAlign);
+        out.println(firstProteinAlign.toString());
+        out.println(secondProteinAlign.toString());
+        return s;
+    }
+    public void outputBacktrack(int[][] backtrack,String firstProtein,String secondProtein,int i,int j,StringBuilder firstProteinAlign,StringBuilder secondProteinAlign){
+        if(i==0 || j==0)
+            return;
+        if(backtrack[i][j]==down){
+            this.outputBacktrack(backtrack, firstProtein, secondProtein, i-1, j, firstProteinAlign, secondProteinAlign);
+            secondProteinAlign.append("-");
+            firstProteinAlign.append(firstProtein.charAt(i-1));
+        }
+        else if(backtrack[i][j]==right){
+            this.outputBacktrack(backtrack, firstProtein, secondProtein, i, j-1, firstProteinAlign, secondProteinAlign);
+            firstProteinAlign.append("-");
+            secondProteinAlign.append(secondProtein.charAt(j-1));
+        }
+        else{
+            this.outputBacktrack(backtrack, firstProtein, secondProtein, i-1, j-1, firstProteinAlign, secondProteinAlign);
+            firstProteinAlign.append(firstProtein.charAt(i-1));
+            secondProteinAlign.append(secondProtein.charAt(j-1));
+        }
+    }
     public void outputLCS(int[][] backtrack,String v,int i,int j,StringBuilder out){
         if(i==0 || j==0)
             return;
