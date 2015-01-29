@@ -549,7 +549,8 @@ public class Bioinformatics {
             //Getting Working Directory
             System.out.println(System.getProperty("user.dir"));
             //Storing inputs in list inputs
-            List inputs= new ArrayList();
+            List<String> matrixInputs=new <String>ArrayList();
+            List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
             File newFile=new File("rosalind_5d.txt");
             FileReader fileReader=new FileReader(newFile);
@@ -558,103 +559,55 @@ public class Bioinformatics {
             while ((line = reader.readLine()) != null) {
              inputs.add(line);
             }
+            File matrixFile=new File("BLOSUM62.txt");
+            FileReader matrixFileReader=new FileReader(matrixFile);
+            BufferedReader matrixReader= new BufferedReader(matrixFileReader);
+            String matrixLine=null;
+            while((matrixLine=matrixReader.readLine())!=null){
+                matrixInputs.add(matrixLine);
+            }
+            
+            StringTokenizer letters=new StringTokenizer(matrixInputs.get(0));
+            List alphabets=new ArrayList();
+            while(letters.hasMoreTokens())
+            {
+                alphabets.add(letters.nextToken());
+            }
+           
+            for(int i=0;i<matrixInputs.size();i++){
+                System.out.println(matrixInputs.get(i));
+            }
+     
+            for(int i=0;i<alphabets.size();i++){
+                System.out.println(alphabets.get(i).toString().charAt(0));
+            }
+            System.out.println(Bioinformatics3.getPos('Y',alphabets));
+            
+            int[][] scoringMatrix=new int[alphabets.size()][alphabets.size()];
+            for(int i=1;i<matrixInputs.size();i++){
+                StringTokenizer row=new StringTokenizer(matrixInputs.get(i));
+                char letter=row.nextToken().toString().charAt(0);
+                int j=0;
+                while(row.hasMoreTokens()){
+                    scoringMatrix[i-1][j++]=Integer.parseInt(row.nextToken().toString());
+                }
+                
+            }
+            
+            for(int i=0;i<alphabets.size();i++){
+                System.out.println("");
+                for(int j=0;j<alphabets.size();j++){
+                    System.out.print(scoringMatrix[i][j]);
+                    System.out.print("\t");
+                }
+            }
             
             //Creating PrintWriter for writing to output file
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             //Creating new Object to handle this string
             StringBuilder output=new StringBuilder();
             Bioinformatics3 newText=new Bioinformatics3();
-            int sourcenode=Integer.parseInt(inputs.get(0).toString());
-            int sinknode=Integer.parseInt(inputs.get(1).toString());
-            int maxnode=0;
-            for(int i=2;i<inputs.size();i++){
-                StringTokenizer fullString=new StringTokenizer(inputs.get(i).toString(),"->");
-                int parentNodeValue=Integer.parseInt(fullString.nextToken());
-                StringTokenizer childString=new StringTokenizer(fullString.nextToken(),":");
-                int childNodeValue=Integer.parseInt(childString.nextToken());
-                if(childNodeValue>maxnode){
-                    maxnode=childNodeValue;
-                }
-                if(parentNodeValue>maxnode){
-                    maxnode=parentNodeValue;
-                }
-            }
-            node[] allnodes=new node[maxnode+1];
-            for(int i=0;i<=maxnode;i++){
-                allnodes[i]=new node(i);
-            }
             
-            edge.allnodes=allnodes;
-            node.allnodes=allnodes;
-            List alledges=new ArrayList();
-            for(int i=2;i<inputs.size();i++){
-                alledges.add(new edge(inputs.get(i).toString())); 
-            }
-            
-            List<node> nodes=Bioinformatics3.toList(allnodes);
-            
-            nodes=newText.stripEverythingButTheCore(nodes,maxnode,sinknode,sourcenode);
- 
-            List<node> adjacencyList=newText.getAdjacencyList(nodes);
-            for(int i=0;i<adjacencyList.size();i++){
-                System.out.println(adjacencyList.get(i).getNodeNumber());
-            }
-
-            //Repopulating nodes:
-            alledges=new ArrayList();
-            for(int i=2;i<inputs.size();i++){
-                alledges.add(new edge(inputs.get(i).toString())); 
-            }
-            nodes=Bioinformatics3.toList(edge.allnodes);
-            nodes=newText.stripEverythingButTheCore(nodes,maxnode,sinknode,sourcenode);
-            
-            for(int i=0;i<nodes.size();i++){
-                if(nodes.get(i).getParents().isEmpty()){
-                    nodes.get(i).setScore(0);
-                }
-            }
-            
-            /*
-            int count=0;
-            for(int i=0;i<nodes.size();i++){
-                if(nodes.get(i).getParents().isEmpty())
-                    count++;
-            }
-            
-            System.out.println(count);
-            */
-            node currentNode=null;
-            
-            for(int i=0;i<adjacencyList.size();i++){
-                adjacencyList.get(i).computeScores();
-                System.out.println(adjacencyList.get(i).getScore());
-                if(adjacencyList.get(i).getNodeNumber()==sinknode){
-                    currentNode=adjacencyList.get(i);
-                }
-            }
-            out.println(currentNode.getScore());
-
-            List<node> backtrack=new <node>ArrayList();
-            backtrack.add(currentNode);
-
-            while(!currentNode.getParents().isEmpty()){
-                     node[] parents=new node[currentNode.getParents().size()];
-                     for(int i=0;i<currentNode.getParents().size();i++){
-                         parents[i]=(node)currentNode.getParents().get(i);
-                         int score=parents[i].getScore()+currentNode.getEdge(parents[i]).getWeight();
-                         if(currentNode.getScore()==score){
-                             backtrack.add(parents[i]);
-                             currentNode=parents[i];
-                             break;
-                         }
-                     }
-             }
-                     
-            out.print(backtrack.get(backtrack.size()-1).getNodeNumber());
-            for(int i=backtrack.size()-2;i>=0;i--){
-                out.print("->");
-                out.print(backtrack.get(i).getNodeNumber());
-            }
             out.close();
         }
         

@@ -205,4 +205,13 @@ public class Bioinformatics3 extends Bioinformatics2{
         }
         return nodeslist;
     }
+    
+    public static int getPos(char letter,List alphabets){
+        int pos=0;
+        for(int i=0;i<alphabets.size();i++){
+            if(alphabets.get(i).toString().charAt(0)==letter)
+                pos=i;
+        }
+        return pos;
+    }
 }
