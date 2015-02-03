@@ -14,6 +14,8 @@ import java.util.*;
 public class node {
     public static node[] allnodes;
     int value;
+    int i;
+    int j;
     List edges=new ArrayList();
     int score=-1;
     List parents=new ArrayList();
@@ -23,8 +25,22 @@ public class node {
         this.value=value;
     }
     
+    public node(int i,int j){
+        this.i=i;
+        this.j=j;
+    }
+    
     public int getNodeNumber(){
         return value;
+    }
+    
+    
+    
+    public int getI(){
+        return this.i;
+    }
+    public int getJ(){
+        return this.j;
     }
     
     public List getEdges(){

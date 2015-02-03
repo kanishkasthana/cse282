@@ -42,6 +42,23 @@ public class edge {
         this.alledges.add(this);
     }
     
+    public edge(node parent,node child,int weight){
+        this.parent=parent;
+        this.child=child;
+        this.weight=weight;
+        this.parent.addChild(child);
+        this.child.addParent(parent);
+        this.parent.addEdge(this);
+        this.child.addEdge(this);
+        this.alledges.add(this);
+    }
+    /*
+    public edge(int i1,int j1,int i2,int j2,int weight){
+        for(int count=0;count<this.allnodes.length;count++){
+            if(allnodes[count].getI()==i1 && allnodes[count].getJ()==j1)
+        }
+    }
+    */
     public node getParent(){
         return parent;
     }

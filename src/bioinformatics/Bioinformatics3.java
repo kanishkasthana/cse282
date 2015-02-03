@@ -274,6 +274,15 @@ public class Bioinformatics3 extends Bioinformatics2{
         }
         return nodeslist;
     }
+    public static List toList(node[][] nds,int n,int m){
+        List<node> nodeslist=new <node>ArrayList();
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+             nodeslist.add(nds[i][j]);    
+            }
+        }
+        return nodeslist;
+    }
     
     public static int getPos(char letter,List alphabets){
         int pos=0;
