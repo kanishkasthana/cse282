@@ -20,6 +20,7 @@ public class node {
     int score=-1;
     List parents=new ArrayList();
     List children=new ArrayList();
+    node backtrackNode=null;
     
     public node(int value){
         this.value=value;
@@ -74,6 +75,10 @@ public class node {
         this.edges.add(newedge);
     }
     
+    public node getBacktrackNode(){
+        return backtrackNode;
+    }
+    
     public edge getEdge(node parent){
       edge e=null;
         for(int i=0;i<this.getEdges().size();i++){
@@ -93,7 +98,12 @@ public class node {
           scores=Bioinformatics.sort(scores);
           int maximum=scores[this.getParents().size()-1];
           this.setScore(maximum);
-      }
-          
+          for(int i=0;i<this.getParents().size();i++){
+              node parent=(node)this.getParents().get(i);
+              if(maximum==parent.getScore()+getEdge(parent).getWeight()){
+                  this.backtrackNode=parent;
+              }
+          }
+      }     
     }
 }

@@ -71,15 +71,4 @@ public class edge {
         return weight;
     }
     
-    public static int getEdgeWeight(node parent, node child){
-     int weight=0;
-        for(int i=0;i<alledges.size();i++){
-            edge temp=(edge)alledges.get(i);
-            if(temp.getParent().equals(parent) && temp.getChild().equals(child))
-                 weight=temp.getWeight();
-        }
-      return weight;
-    
-    }
-  
 }

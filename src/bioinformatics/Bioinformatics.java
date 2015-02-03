@@ -553,14 +553,14 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("dataset_247_9.txt");
+            File newFile=new File("dataset_247_3.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
             while ((line = reader.readLine()) != null) {
              inputs.add(line);
             }
-            File matrixFile=new File("PAM250_1.txt");
+            File matrixFile=new File("BLOSUM62.txt");
             FileReader matrixFileReader=new FileReader(matrixFile);
             BufferedReader matrixReader= new BufferedReader(matrixFileReader);
             String matrixLine=null;
@@ -590,8 +590,8 @@ public class Bioinformatics {
             
             String firstProtein=inputs.get(0);
             String secondProtein=inputs.get(1);
-            firstProtein="PLEASANTLY";
-            secondProtein="MEANLY";
+            //firstProtein="PLEASANTLY";
+            //secondProtein="MEANLY";
             int gapPenalty=5;
             //Creating PrintWriter for writing to output file
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
@@ -600,28 +600,18 @@ public class Bioinformatics {
             Bioinformatics3 newText=new Bioinformatics3();
             int n=firstProtein.length()+1;
             int m=secondProtein.length()+1;
-            //System.out.println(n*m);
             node[][] nodeMatrix=new node[firstProtein.length()+1][secondProtein.length()+1];
             nodeMatrix[0][0]=new node(0,0);
             nodeMatrix[0][0].setScore(0);
-            /*
-            node sourcenode=nodeMatrix[0][0];
-            nodeMatrix[firstProtein.length()][secondProtein.length()]=new node(firstProtein.length(),secondProtein.length());
-            node sinknode=nodeMatrix[firstProtein.length()][secondProtein.length()];
-            */
             List alledges=new ArrayList();
             for(int i=1;i<=firstProtein.length();i++){
                 nodeMatrix[i][0]=new node(i,0);
-                //alledges.add(new edge(sourcenode,nodeMatrix[i][0],0));
-                //alledges.add(new edge(nodeMatrix[i][0],sinknode,0));
                 alledges.add(new edge(nodeMatrix[i-1][0],nodeMatrix[i][0],-1*gapPenalty));
                 nodeMatrix[i][0].computeScores();
             }
             
             for(int j=1;j<=secondProtein.length();j++){
                 nodeMatrix[0][j]=new node(0,j);
-                //alledges.add(new edge(sourcenode,nodeMatrix[0][j],0));
-                //alledges.add(new edge(nodeMatrix[0][j],sinknode,0));
                 alledges.add(new edge(nodeMatrix[0][j-1],nodeMatrix[0][j],-1*gapPenalty));
                 nodeMatrix[0][j].computeScores();
             }
@@ -633,34 +623,58 @@ public class Bioinformatics {
                 char columnchar=secondProtein.charAt(j-1);
                 int row=getPos(rowchar,alphabets);
                 int column=getPos(columnchar,alphabets);
-                int score=scoringMatrix[row][column];
-               
-                    nodeMatrix[i][j]=new node(i,j);
-                
-                /*
-                if(i!=firstProtein.length() && j!=secondProtein.length()){
-                alledges.add(new edge(nodeMatrix[i][j],sinknode,0));
-                }
-                alledges.add(new edge(sourcenode,nodeMatrix[i][j],0));
-                */
+                int score=scoringMatrix[row][column];   
+                nodeMatrix[i][j]=new node(i,j);
                 alledges.add(new edge(nodeMatrix[i-1][j-1],nodeMatrix[i][j],score));
                 alledges.add(new edge(nodeMatrix[i-1][j],nodeMatrix[i][j],-1*gapPenalty));
                 alledges.add(new edge(nodeMatrix[i][j-1],nodeMatrix[i][j],-1*gapPenalty));
                 nodeMatrix[i][j].computeScores();
             }
          }
-            System.out.println(nodeMatrix[n-1][m-1].getChildren().size());
+            
             List<node> nodes=Bioinformatics3.toList(nodeMatrix,n,m);
             
             
             int count=0;
             for(int i=0;i<nodes.size();i++){
-                if(nodes.get(i).getChildren().isEmpty())
+                if(nodes.get(i).getParents().isEmpty())
                     count++;
             }
-            System.out.println(count);
-            //System.out.println(sinknode.getScore());
             
+            out.println(nodeMatrix[n-1][m-1].getScore());
+            
+            StringBuilder firstProteinAlign=new StringBuilder();
+            StringBuilder secondProteinAlign=new StringBuilder();
+            
+            node currentNode=nodeMatrix[n-1][m-1];
+            while(currentNode!=null){
+                
+                if(currentNode.getBacktrackNode()!=null){
+                    int backi,backj,i,j;            
+                    i=currentNode.getI();
+                    j=currentNode.getJ();
+                    backi=currentNode.getBacktrackNode().getI();
+                    backj=currentNode.getBacktrackNode().getJ();
+                    if(backi==i-1 && backj==j){
+                        secondProteinAlign.append("-");
+                        firstProteinAlign.append(firstProtein.charAt(i-1));
+                    }
+                    if(backi==i && backj==j-1){
+                        firstProteinAlign.append("-");
+                        secondProteinAlign.append(secondProtein.charAt(j-1));
+                    }
+                    if(backi==i-1 && backj==j-1){
+                        firstProteinAlign.append(firstProtein.charAt(i-1));
+                        secondProteinAlign.append(secondProtein.charAt(j-1));
+                    }
+                    
+                }
+                currentNode=currentNode.getBacktrackNode();
+
+            }
+            
+            out.println(firstProteinAlign.reverse().toString());
+            out.println(secondProteinAlign.reverse().toString());
             
             out.close();
         }
