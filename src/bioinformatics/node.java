@@ -79,31 +79,52 @@ public class node {
         return backtrackNode;
     }
     
-    public edge getEdge(node parent){
+    public edge getEdge(node child){
       edge e=null;
         for(int i=0;i<this.getEdges().size();i++){
-            if((  (edge)this.getEdges().get(i)  ).getParent().equals(parent))
+            if((  (edge)this.getEdges().get(i)  ).getChild().equals(child))
                 e= (edge) this.getEdges().get(i);
         }
       return e;
     }
     
-    public void computeScores(){
+    public edge getEdgeParent(node parent){
+      edge e=null;
+        for(int i=0;i<this.getEdges().size();i++){
+            if((  (edge)this.getEdges().get(i)  ).getParent().equals(parent))
+                e= (edge) this.getEdges().get(i);
+        }
+      return e;    
+    }
+    //Wow, who would have thought the performance improvements you could get from reorganizing your code, its incredible!
+    public void computeScores(node sinknode, node sourcenode){
       if(!this.getParents().isEmpty()){
           int[] scores=new int[this.getParents().size()];
-          for(int i=0;i<this.getParents().size();i++){
-              node parent=(node)this.getParents().get(i);
-              scores[i]=parent.getScore()+getEdge(parent).getWeight();
+          node maxParent=(node)this.getParents().get(0);         
+          int maxScore=maxParent.getScore();
+          if(!this.equals(sinknode))
+              maxScore+=this.getEdgeParent(maxParent).getWeight();
+          else{
+              if(!maxParent.equals(sourcenode))
+                  maxScore+=maxParent.getEdge(this).getWeight();
           }
-          scores=Bioinformatics.sort(scores);
-          int maximum=scores[this.getParents().size()-1];
-          this.setScore(maximum);
+
           for(int i=0;i<this.getParents().size();i++){
               node parent=(node)this.getParents().get(i);
-              if(maximum==parent.getScore()+getEdge(parent).getWeight()){
-                  this.backtrackNode=parent;
+              int score=parent.getScore();
+              if(!this.equals(sinknode))  
+                score+=this.getEdgeParent(parent).getWeight();
+              else{
+                  if(!parent.equals(sourcenode))
+                      score+=parent.getEdge(this).getWeight();
               }
+                if(score>maxScore){
+                      maxScore=score;
+                      maxParent=parent;
+                }
           }
+          this.setScore(maxScore);
+          this.backtrackNode=maxParent;
       }     
     }
 }
