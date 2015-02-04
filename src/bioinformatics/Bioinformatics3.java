@@ -108,10 +108,10 @@ public class Bioinformatics3 extends Bioinformatics2{
         int[][] s=new int[firstProtein.length()+1][secondProtein.length()+1];
         s[0][0]=0;
         for(int i=1;i<=firstProtein.length();i++){
-            s[i][0]=s[i-1][0]-5;
+            s[i][0]=s[i-1][0]-gapPenalty;
         }
         for(int j=1;j<=secondProtein.length();j++){
-            s[0][j]=s[0][j-1]-5;
+            s[0][j]=s[0][j-1]-gapPenalty;
         }
         
         for(int i=1;i<=firstProtein.length();i++){
@@ -121,6 +121,12 @@ public class Bioinformatics3 extends Bioinformatics2{
                 int row=getPos(rowchar,alphabets);
                 int column=getPos(columnchar,alphabets);
                 int score=scoringMatrix[row][column];
+                if(rowchar==columnchar){
+                    score=0;
+                }
+                else
+                    score=-1;
+                
                 s[i][j]=max(s[i-1][j]-gapPenalty,s[i][j-1]-gapPenalty,s[i-1][j-1]+score);
                 
                 if(s[i][j]==s[i-1][j]-gapPenalty){
@@ -136,7 +142,7 @@ public class Bioinformatics3 extends Bioinformatics2{
             }
         }
         //outputing allignment score;
-        out.println(s[firstProtein.length()][secondProtein.length()]);
+        out.println(s[firstProtein.length()][secondProtein.length()]*-1);
         /*
         for(int i=0;i<=firstProtein.length();i++){
             for(int j=0;j<=secondProtein.length();j++){
@@ -149,8 +155,8 @@ public class Bioinformatics3 extends Bioinformatics2{
         StringBuilder firstProteinAlign=new StringBuilder();
         StringBuilder secondProteinAlign=new StringBuilder();
         outputBacktrack(backtrack, firstProtein, secondProtein, firstProtein.length(),secondProtein.length(),firstProteinAlign,secondProteinAlign);
-        out.println(firstProteinAlign.toString());
-        out.println(secondProteinAlign.toString());
+        //out.println(firstProteinAlign.toString());
+        //out.println(secondProteinAlign.toString());
         return s;
     }
     public void outputBacktrack(int[][] backtrack,String firstProtein,String secondProtein,int i,int j,StringBuilder firstProteinAlign,StringBuilder secondProteinAlign){
