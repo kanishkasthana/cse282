@@ -553,7 +553,7 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_5h.txt");
+            File newFile=new File("rosalind_5i.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -586,11 +586,11 @@ public class Bioinformatics {
                 }    
             }
             
-            String firstProtein=inputs.get(0);
-            String secondProtein=inputs.get(1);
-            //firstProtein="GTAGGCTTAAGGTTA";
-            //secondProtein="TAGATA";
-            int gapPenalty=1;
+            String firstProtein=inputs.get(1);
+            String secondProtein=inputs.get(0);
+            //secondProtein="PAWHEAE";
+            //firstProtein="HEAGAWGHEE";
+            int gapPenalty=2;
             //Creating PrintWriter for writing to output file
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             //Creating new Object to handle this string
@@ -608,12 +608,12 @@ public class Bioinformatics {
             for(int i=1;i<=firstProtein.length();i++){
                 nodeMatrix[i][0]=new node(i,0);
                 alledges.add(new edge(nodeMatrix[i-1][0],nodeMatrix[i][0],-1*gapPenalty));
-                alledges.add(new edge(sourcenode,nodeMatrix[i][0],0));
             }
             
             for(int j=1;j<=secondProtein.length();j++){
                 nodeMatrix[0][j]=new node(0,j);
                 alledges.add(new edge(nodeMatrix[0][j-1],nodeMatrix[0][j],-1*gapPenalty));
+                alledges.add(new edge(sourcenode,nodeMatrix[0][j],0));
             }
             
             for(int i=1;i<=firstProtein.length();i++){
@@ -624,7 +624,7 @@ public class Bioinformatics {
                 if(rowchar==columnchar)
                     score=1;
                 else
-                    score=-1;
+                    score=-2;
                 
                 if(!(i==n-1 && j==m-1))//Take care of boolean algebra next time
                     nodeMatrix[i][j]=new node(i,j);
@@ -672,9 +672,8 @@ public class Bioinformatics {
             }
             
             out.println(sinknode.getScore());
-            out.println(firstProteinAlign.reverse().toString());
             out.println(secondProteinAlign.reverse().toString());
-            
+            out.println(firstProteinAlign.reverse().toString());
             out.close();
         }
         
