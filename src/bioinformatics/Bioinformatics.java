@@ -553,7 +553,7 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_5g.txt");
+            File newFile=new File("rosalind_5h.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -588,15 +588,92 @@ public class Bioinformatics {
             
             String firstProtein=inputs.get(0);
             String secondProtein=inputs.get(1);
-            //firstProtein="PLEASANTLY";
-            //secondProtein="MEANLY";
+            //firstProtein="GTAGGCTTAAGGTTA";
+            //secondProtein="TAGATA";
             int gapPenalty=1;
             //Creating PrintWriter for writing to output file
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             //Creating new Object to handle this string
-            StringBuilder output=new StringBuilder();
             Bioinformatics3 newText=new Bioinformatics3();
-            int[][] s=newText.getAlignmentScores(firstProtein, secondProtein, scoringMatrix, alphabets, gapPenalty,out);
+            int n=firstProtein.length()+1;
+            int m=secondProtein.length()+1;
+            node[][] nodeMatrix=new node[firstProtein.length()+1][secondProtein.length()+1];
+            nodeMatrix[0][0]=new node(0,0);
+            nodeMatrix[0][0].setScore(0);
+            node sourcenode=nodeMatrix[0][0];
+            nodeMatrix[n-1][m-1]=new node(n-1,m-1);
+            node sinknode=nodeMatrix[n-1][m-1];
+            List alledges=new ArrayList();
+
+            for(int i=1;i<=firstProtein.length();i++){
+                nodeMatrix[i][0]=new node(i,0);
+                alledges.add(new edge(nodeMatrix[i-1][0],nodeMatrix[i][0],-1*gapPenalty));
+                alledges.add(new edge(sourcenode,nodeMatrix[i][0],0));
+            }
+            
+            for(int j=1;j<=secondProtein.length();j++){
+                nodeMatrix[0][j]=new node(0,j);
+                alledges.add(new edge(nodeMatrix[0][j-1],nodeMatrix[0][j],-1*gapPenalty));
+            }
+            
+            for(int i=1;i<=firstProtein.length();i++){
+            for(int j=1;j<=secondProtein.length();j++){
+                char rowchar=firstProtein.charAt(i-1);
+                char columnchar=secondProtein.charAt(j-1);
+                int score;
+                if(rowchar==columnchar)
+                    score=1;
+                else
+                    score=-1;
+                
+                if(!(i==n-1 && j==m-1))//Take care of boolean algebra next time
+                    nodeMatrix[i][j]=new node(i,j);
+                alledges.add(new edge(nodeMatrix[i-1][j-1],nodeMatrix[i][j],score));
+                alledges.add(new edge(nodeMatrix[i-1][j],nodeMatrix[i][j],-1*gapPenalty));
+                alledges.add(new edge(nodeMatrix[i][j-1],nodeMatrix[i][j],-1*gapPenalty));
+            }
+         }
+            for(int i=0;i<firstProtein.length();i++){
+                alledges.add(new edge(nodeMatrix[i][m-1],sinknode,0));
+            }
+            for(int i=0;i<=firstProtein.length();i++){
+               for(int j=0;j<=secondProtein.length();j++){
+                   nodeMatrix[i][j].computeScores(sinknode,sourcenode);
+               }
+           }
+            
+            StringBuilder firstProteinAlign=new StringBuilder();
+            StringBuilder secondProteinAlign=new StringBuilder();
+            node currentNode=nodeMatrix[n-1][m-1];
+            while(currentNode!=null){
+                
+                if(currentNode.getBacktrackNode()!=null){
+                    int backi,backj,i,j;            
+                    i=currentNode.getI();
+                    j=currentNode.getJ();
+                    backi=currentNode.getBacktrackNode().getI();
+                    backj=currentNode.getBacktrackNode().getJ();
+                    if(backi==i-1 && backj==j){
+                        secondProteinAlign.append("-");
+                        firstProteinAlign.append(firstProtein.charAt(i-1));
+                    }
+                    if(backi==i && backj==j-1){
+                        firstProteinAlign.append("-");
+                        secondProteinAlign.append(secondProtein.charAt(j-1));
+                    }
+                    if(backi==i-1 && backj==j-1){
+                        firstProteinAlign.append(firstProtein.charAt(i-1));
+                        secondProteinAlign.append(secondProtein.charAt(j-1));
+                    }
+                    
+                }
+                currentNode=currentNode.getBacktrackNode();
+
+            }
+            
+            out.println(sinknode.getScore());
+            out.println(firstProteinAlign.reverse().toString());
+            out.println(secondProteinAlign.reverse().toString());
             
             out.close();
         }
