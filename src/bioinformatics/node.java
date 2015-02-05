@@ -17,6 +17,7 @@ public class node {
     int value;
     int i;
     int j;
+    int k;
     List edges=new ArrayList();
     int score=-1;
     List parents=new ArrayList();
@@ -32,13 +33,23 @@ public class node {
         this.j=j;
     }
     
+    /*
     public node(int i,int j,int matrixlevel){
         this.i=i;
         this.j=j;
         this.matrixlevel=matrixlevel;
         allnodes.add(this);
         this.setScore(0);
+    }*/
+    
+    public node(int i,int j, int k){
+        this.i=i;
+        this.j=j;
+        this.k=k;
+        allnodes.add(this);
+        this.setScore(0);
     }
+    
     
     public int getNodeNumber(){
         return value;
@@ -51,10 +62,14 @@ public class node {
     public int getI(){
         return this.i;
     }
+    
     public int getJ(){
         return this.j;
     }
     
+    public int getK(){
+        return this.k;
+    }
     public List getEdges(){
         return edges;
     }
