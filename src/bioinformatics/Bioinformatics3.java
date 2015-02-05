@@ -272,6 +272,60 @@ public class Bioinformatics3 extends Bioinformatics2{
         
         return allnodes;
     }
+
+    public List stripEverythingButTheCore(List <node>allnodes,node sinknode, node sourcenode){
+        List<node> nodes=new <node>ArrayList();
+        List<node> candidates=new<node>ArrayList();
+        for(int i=0;i<allnodes.size();i++){
+            if(allnodes.get(i).getParents().isEmpty() && !allnodes.get(i).equals(sourcenode)){
+                candidates.add(allnodes.get(i));
+            }
+            if(allnodes.get(i).getChildren().isEmpty() && !allnodes.get(i).equals(sinknode)){
+                nodes.add(allnodes.get(i));
+            }
+        }
+        while(!candidates.isEmpty()){
+            node arbitary=candidates.get(0);
+            candidates.remove(arbitary);
+            allnodes.remove(arbitary);
+            for(int i=0;i<arbitary.getChildren().size();i++){
+                node child=(node) arbitary.getChildren().get(i);
+                child.getParents().remove(arbitary);
+                edge childedge=child.getEdge(arbitary);
+                child.getEdges().remove(childedge);
+                arbitary.getEdges().remove(childedge);
+                edge.alledges.remove(childedge);
+                if(child.getParents().isEmpty() && !child.equals(sourcenode)){
+                    candidates.add(child);
+                }
+            }
+            arbitary.getChildren().clear();
+            arbitary.getEdges().clear();
+        }
+        
+           while(!nodes.isEmpty()){
+            node arbitary=nodes.get(0);
+            nodes.remove(arbitary);
+            allnodes.remove(arbitary);
+            for(int i=0;i<arbitary.getParents().size();i++){
+                node parent=(node) arbitary.getParents().get(i);
+                parent.getChildren().remove(arbitary);
+                edge parentedge=arbitary.getEdge(parent);
+                parent.getEdges().remove(parentedge);
+                arbitary.getEdges().remove(parentedge);
+                edge.alledges.remove(parentedge);
+                if(parent.getChildren().isEmpty() && parent.equals(sinknode)){
+                    nodes.add(parent);
+                }
+            }
+            arbitary.getParents().clear();
+            arbitary.getEdges().clear();
+
+        }
+
+        
+        return allnodes;
+    }
     
     public static List toList(node[] nds){
         List<node> nodeslist=new <node>ArrayList();

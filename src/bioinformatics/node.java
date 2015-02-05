@@ -12,7 +12,8 @@ import java.util.*;
  * @author kanis_000
  */
 public class node {
-    public static node[] allnodes;
+    public static List<node> allnodes=new <node>ArrayList();
+    int matrixlevel;
     int value;
     int i;
     int j;
@@ -31,11 +32,21 @@ public class node {
         this.j=j;
     }
     
+    public node(int i,int j,int matrixlevel){
+        this.i=i;
+        this.j=j;
+        this.matrixlevel=matrixlevel;
+        allnodes.add(this);
+        this.setScore(0);
+    }
+    
     public int getNodeNumber(){
         return value;
     }
     
-    
+    public int getMatrixLevel(){
+        return this.matrixlevel;
+    }
     
     public int getI(){
         return this.i;

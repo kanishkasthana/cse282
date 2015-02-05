@@ -14,7 +14,11 @@ import java.util.*;
  * @author Kanishk Asthana kasthana@eng.ucsd.edu
  */
 public class Bioinformatics {
-
+    
+    public static int upper=1;
+    public static int lower=-1;
+    public static int middle=0;
+    
     private String text=null;
     private List frequentPatterns=null;
     int[] frequencyArray=null;
@@ -553,14 +557,14 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_5i.txt");
+            File newFile=new File("rosalind_5j.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
             while ((line = reader.readLine()) != null) {
              inputs.add(line);
             }
-            File matrixFile=new File("PAM250_1.txt");
+            File matrixFile=new File("BLOSUM62.txt");
             FileReader matrixFileReader=new FileReader(matrixFile);
             BufferedReader matrixReader= new BufferedReader(matrixFileReader);
             String matrixLine=null;
@@ -586,17 +590,234 @@ public class Bioinformatics {
                 }    
             }
             
-            String firstProtein=inputs.get(1);
-            String secondProtein=inputs.get(0);
-            //secondProtein="PAWHEAE";
-            //firstProtein="HEAGAWGHEE";
-            int gapPenalty=2;
+            String firstProtein=inputs.get(0);
+            String secondProtein=inputs.get(1);
+            
+            //firstProtein="PRTEINS";
+            //secondProtein="PRTWPSEIN";
+            
+            int gapOpeningPenalty=11;
+            int gapExtensionPenalty=1;
             //Creating PrintWriter for writing to output file
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             //Creating new Object to handle this string
             Bioinformatics3 newText=new Bioinformatics3();
             int n=firstProtein.length()+1;
             int m=secondProtein.length()+1;
+            node[][] middleNodeMatrix=new node[n][m];
+            node[][] upperNodeMatrix=new node[n][m];
+            node[][] lowerNodeMatrix=new node[n][m];
+            
+            //Initializing all nodes
+            for(int i=0;i<n;i++){
+                for(int j=0;j<m;j++){
+                    middleNodeMatrix[i][j]=new node(i,j,middle);
+                    upperNodeMatrix[i][j]=new node(i,j,upper);
+                    lowerNodeMatrix[i][j]=new node(i,j,lower);
+                }
+            }
+            
+            node sourcenode=middleNodeMatrix[0][0];
+            node sinknode=middleNodeMatrix[n-1][m-1];
+            
+            List <edge>alledges=new <edge>ArrayList();
+            //Adding Diagonal Edges to middleNodeMatrix
+            for(int i=1;i<n;i++){
+                for(int j=1;j<m;j++){
+                    char rowchar=firstProtein.charAt(i-1);
+                    char columnchar=secondProtein.charAt(j-1);
+                    int row=getPos(rowchar,alphabets);
+                    int column=getPos(columnchar,alphabets);
+                    int score=scoringMatrix[row][column];
+                    alledges.add(new edge(middleNodeMatrix[i-1][j-1],middleNodeMatrix[i][j],score));
+                }
+            }
+            
+            //I think there might be confusion between the v and the w and whether they correspond to the upper or lower matrices. make sure you take this into 
+            //account when you are getting the final output dude. damn this problem is hard. Now I know what hard kind of means!
+            
+            
+            //Adding vertical edges to lowerNodeMatrix
+            for(int i=1;i<n;i++){
+                for(int j=0;j<m;j++){
+                    alledges.add(new edge(lowerNodeMatrix[i-1][j],lowerNodeMatrix[i][j],-1*gapExtensionPenalty));
+                }
+            }
+            
+            //Adding horizontal edges to upperNodeMatrix
+            for(int i=0;i<n;i++){
+                for(int j=1;j<m;j++){
+                    alledges.add(new edge(upperNodeMatrix[i][j-1],upperNodeMatrix[i][j],-1*gapExtensionPenalty));
+                }
+            }
+            
+            //Adding edges with gapOpening penalty to lower from middle and edges with zero weights from lower to middle
+            
+            for(int i=0;i<n-1;i++){
+                for(int j=0;j<m;j++){
+                    alledges.add(new edge(middleNodeMatrix[i][j],lowerNodeMatrix[i+1][j],-1*gapOpeningPenalty));
+                    alledges.add(new edge(lowerNodeMatrix[i+1][j],middleNodeMatrix[i+1][j],0));
+                }
+            }
+            
+            for(int i=0;i<n;i++){
+                for(int j=0;j<m-1;j++){
+                   alledges.add(new edge(middleNodeMatrix[i][j],upperNodeMatrix[i][j+1],-1*gapOpeningPenalty));
+                   alledges.add(new edge(upperNodeMatrix[i][j+1],middleNodeMatrix[i][j+1],0));
+                }
+            }
+            
+            List<node> adjacencyList=newText.getAdjacencyList(node.allnodes);
+            
+            /*
+            for(int i=0;i<adjacencyList.size();i++){
+                System.out.print(adjacencyList.get(i).getI());
+                System.out.print(",");
+                System.out.print(adjacencyList.get(i).getJ());
+                System.out.print(":");
+                System.out.println(adjacencyList.get(i).getMatrixLevel());
+            }
+            */
+            
+            //Repopulating nodes:
+            alledges=new ArrayList();
+
+            //Adding Diagonal Edges to middleNodeMatrix
+            for(int i=1;i<n;i++){
+                for(int j=1;j<m;j++){
+                    char rowchar=firstProtein.charAt(i-1);
+                    char columnchar=secondProtein.charAt(j-1);
+                    int row=getPos(rowchar,alphabets);
+                    int column=getPos(columnchar,alphabets);
+                    int score=scoringMatrix[row][column];
+                    alledges.add(new edge(middleNodeMatrix[i-1][j-1],middleNodeMatrix[i][j],score));
+                }
+            }
+
+            //Adding vertical edges to lowerNodeMatrix
+            for(int i=1;i<n;i++){
+                for(int j=0;j<m;j++){
+                    alledges.add(new edge(lowerNodeMatrix[i-1][j],lowerNodeMatrix[i][j],-1*gapExtensionPenalty));
+                }
+            }
+            
+            //Adding horizontal edges to upperNodeMatrix
+            for(int i=0;i<n;i++){
+                for(int j=1;j<m;j++){
+                    alledges.add(new edge(upperNodeMatrix[i][j-1],upperNodeMatrix[i][j],-1*gapExtensionPenalty));
+                }
+            }
+            
+            //Adding edges with gapOpening penalty to lower from middle and edges with zero weights from lower to middle
+            
+            for(int i=0;i<n-1;i++){
+                for(int j=0;j<m;j++){
+                    alledges.add(new edge(middleNodeMatrix[i][j],lowerNodeMatrix[i+1][j],-1*gapOpeningPenalty));
+                    alledges.add(new edge(lowerNodeMatrix[i+1][j],middleNodeMatrix[i+1][j],0));
+                }
+            }
+            
+            for(int i=0;i<n;i++){
+                for(int j=0;j<m-1;j++){
+                   alledges.add(new edge(middleNodeMatrix[i][j],upperNodeMatrix[i][j+1],-1*gapOpeningPenalty));
+                   alledges.add(new edge(upperNodeMatrix[i][j+1],middleNodeMatrix[i][j+1],0));
+                }
+            }
+            
+            for(int i=0;i<adjacencyList.size();i++){
+                node temp=(node)adjacencyList.get(i);
+                temp.computeScores(sinknode, sourcenode);
+            }
+            
+            //outputting score
+            //out.println(sinknode.getScore());
+            
+            List allnodes=newText.stripEverythingButTheCore(node.allnodes, sinknode, sourcenode);
+            
+            StringBuilder firstProteinAlign=new StringBuilder();
+            StringBuilder secondProteinAlign=new StringBuilder();
+            node currentNode=sinknode;
+            while(currentNode!=null){
+                
+                if(currentNode.getBacktrackNode()!=null){
+                    int backi,backj,i,j;            
+                    i=currentNode.getI();
+                    j=currentNode.getJ();
+                    backi=currentNode.getBacktrackNode().getI();
+                    backj=currentNode.getBacktrackNode().getJ();
+                    if(backi==i-1 && backj==j){
+                        secondProteinAlign.append("-");
+                        firstProteinAlign.append(firstProtein.charAt(i-1));
+                    }
+                    if(backi==i && backj==j-1){
+                        firstProteinAlign.append("-");
+                        secondProteinAlign.append(secondProtein.charAt(j-1));
+                    }
+                    if(backi==i-1 && backj==j-1){
+                        firstProteinAlign.append(firstProtein.charAt(i-1));
+                        secondProteinAlign.append(secondProtein.charAt(j-1));
+                    }
+                    
+                }
+                currentNode=currentNode.getBacktrackNode();
+
+            }
+            //Thank you past mistakes you are awesome!
+            out.println(sinknode.getScore());
+            out.println(firstProteinAlign.reverse().toString());
+            out.println(secondProteinAlign.reverse().toString());
+
+            //Tests to see if graph was made correctly
+            int count=0;
+            List<node> nodes=Bioinformatics3.toList(upperNodeMatrix,n,m);
+            for(int i=0;i<nodes.size();i++){
+                count+=(nodes.get(i).getEdges().size());  
+            }            
+            
+            System.out.println(count);
+            System.out.println((n)*(m-1)*4);
+            
+            
+            //System.out.println(sinknode.getChildren().size());
+            /*
+            List<node> adjacencyList=newText.getAdjacencyList(nodes);
+            for(int i=0;i<adjacencyList.size();i++){
+                System.out.println(adjacencyList.get(i).getNodeNumber());
+            }
+
+            //Repopulating nodes:
+            alledges=new ArrayList();
+            for(int i=2;i<inputs.size();i++){
+                alledges.add(new edge(inputs.get(i).toString())); 
+            }
+            nodes=Bioinformatics3.toList(edge.allnodes);
+            nodes=newText.stripEverythingButTheCore(nodes,maxnode,sinknode,sourcenode);
+            
+            for(int i=0;i<nodes.size();i++){
+                if(nodes.get(i).getParents().isEmpty()){
+                    nodes.get(i).setScore(0);
+                }
+            }
+            
+
+            node currentNode=null;
+            
+            for(int i=0;i<adjacencyList.size();i++){
+                adjacencyList.get(i).computeScores();
+                System.out.println(adjacencyList.get(i).getScore());
+                if(adjacencyList.get(i).getNodeNumber()==sinknode){
+                    currentNode=adjacencyList.get(i);
+                }
+            }
+            out.println(currentNode.getScore());
+
+            */
+            
+            
+            
+            /*
+            
+            
             node[][] nodeMatrix=new node[firstProtein.length()+1][secondProtein.length()+1];
             nodeMatrix[0][0]=new node(0,0);
             nodeMatrix[0][0].setScore(0);
@@ -604,6 +825,7 @@ public class Bioinformatics {
             nodeMatrix[n-1][m-1]=new node(n-1,m-1);
             node sinknode=nodeMatrix[n-1][m-1];
             List alledges=new ArrayList();
+            
 
             for(int i=1;i<=firstProtein.length();i++){
                 nodeMatrix[i][0]=new node(i,0);
@@ -674,6 +896,7 @@ public class Bioinformatics {
             out.println(sinknode.getScore());
             out.println(secondProteinAlign.reverse().toString());
             out.println(firstProteinAlign.reverse().toString());
+            */
             out.close();
         }
         
