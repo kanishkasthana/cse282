@@ -617,7 +617,41 @@ public class Bioinformatics {
             node sinknode=nodeMatrix[n-1][m-1][o-1];
             
             List <edge>alledges=new <edge>ArrayList();
+            //Correct Number of nodes made or not?
+            System.out.println(node.allnodes.size());
+            System.out.println(n*m*o);
             
+            for(int i=0;i<n;i++){
+                for(int j=1;j<m;j++){
+                    for(int k=0;k<o;k++){
+                    alledges.add(new edge(nodeMatrix[i][j-1][k] , nodeMatrix[i][j][k],0));
+                    }
+                }
+            }    
+            
+            for(int i=1;i<n;i++){
+                for(int j=0;j<m;j++){
+                    for(int k=0;k<o;k++){
+                    alledges.add(new edge(nodeMatrix[i-1][j][k] , nodeMatrix[i][j][k],0));
+                    }
+                }
+            }
+            
+            for(int i=0;i<n;i++){
+                for(int j=0;j<m;j++){
+                    for(int k=1;k<o;k++){
+                    alledges.add(new edge(nodeMatrix[i][j][k-1] , nodeMatrix[i][j][k],0));
+                    }
+                }
+            }    
+
+            for(int i=1;i<n;i++)
+            
+            System.out.println(edge.alledges.size());
+            System.out.println( n*(m-1)*o+ (n-1)*m*o+ n*m*(o-1));
+       
+            
+              
             for(int i=1;i<=firstProtein.length();i++){
                 alledges.add(new edge(nodeMatrix[i-1][0][0],nodeMatrix[i][0][0],0));
                 nodeMatrix[i][0][0].computeScores(sinknode,sourcenode);
@@ -694,11 +728,6 @@ public class Bioinformatics {
                     i=currentNode.getI();
                     j=currentNode.getJ();
                     k=currentNode.getK();
-                    System.out.print(i);
-                    System.out.print(":");
-                    System.out.print(j);
-                    System.out.print(":");
-                    System.out.println(k);
                     backi=currentNode.getBacktrackNode().getI();
                     backj=currentNode.getBacktrackNode().getJ();
                     if(backi==i-1 && backj==j){
@@ -716,17 +745,6 @@ public class Bioinformatics {
                     
                 }
                 currentNode=currentNode.getBacktrackNode();
-                int backi,backj,i,j,k;            
-                    i=currentNode.getI();
-                    j=currentNode.getJ();
-                    k=currentNode.getK();
-                    System.out.print(i);
-                    System.out.print(":");
-                    System.out.print(j);
-                    System.out.print(":");
-                    System.out.println(k);
-                    
-
             }
             
 
