@@ -594,9 +594,9 @@ public class Bioinformatics {
             String secondProtein=inputs.get(1);
             String thirdProtein=inputs.get(2);
             
-            firstProtein="ATATCCG";
-            secondProtein="TCCGA";
-            thirdProtein="ATGTACTG";
+            //firstProtein="ATATCCG";
+            //secondProtein="TCCGA";
+            //sthirdProtein="ATGTACTG";
             //Creating PrintWriter for writing to output file
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             //Creating new Object to handle this string
@@ -617,10 +617,8 @@ public class Bioinformatics {
             node sinknode=nodeMatrix[n-1][m-1][o-1];
             
             List <edge>alledges=new <edge>ArrayList();
-            //Correct Number of nodes made or not?
-            System.out.println(node.allnodes.size());
-            System.out.println(n*m*o);
             
+            //Creating all 7 edges 
             for(int i=0;i<n;i++){
                 for(int j=1;j<m;j++){
                     for(int k=0;k<o;k++){
@@ -640,63 +638,35 @@ public class Bioinformatics {
             for(int i=0;i<n;i++){
                 for(int j=0;j<m;j++){
                     for(int k=1;k<o;k++){
-                    alledges.add(new edge(nodeMatrix[i][j][k-1] , nodeMatrix[i][j][k],0));
+                        alledges.add(new edge(nodeMatrix[i][j][k-1] , nodeMatrix[i][j][k],0));
                     }
                 }
             }    
 
-            for(int i=1;i<n;i++)
-            
-            System.out.println(edge.alledges.size());
-            System.out.println( n*(m-1)*o+ (n-1)*m*o+ n*m*(o-1));
-       
-            
-              
-            for(int i=1;i<=firstProtein.length();i++){
-                alledges.add(new edge(nodeMatrix[i-1][0][0],nodeMatrix[i][0][0],0));
-                nodeMatrix[i][0][0].computeScores(sinknode,sourcenode);
+            for(int i=1;i<n;i++){
+                for(int j=1;j<m;j++){
+                    for(int k=0;k<o;k++){
+                        alledges.add(new edge(nodeMatrix[i-1][j-1][k] , nodeMatrix[i][j][k],0));
+                    }
+                }
             }
             
-            for(int j=1;j<=secondProtein.length();j++){
-                alledges.add(new edge(nodeMatrix[0][j-1][0],nodeMatrix[0][j][0],0));
-                nodeMatrix[0][j][0].computeScores(sinknode,sourcenode);
+            for(int i=0;i<n;i++){
+                for(int j=1;j<m;j++){
+                    for(int k=1;k<o;k++){
+                        alledges.add(new edge(nodeMatrix[i][j-1][k-1] , nodeMatrix[i][j][k],0));
+                    }
+                }
+            }
+                      
+            for(int i=1;i<n;i++){
+                for(int j=0;j<m;j++){
+                    for(int k=1;k<o;k++){
+                        alledges.add(new edge(nodeMatrix[i-1][j][k-1] , nodeMatrix[i][j][k],0));
+                    }
+                }
             }
             
-            for(int k=1;k<=thirdProtein.length();k++){
-                alledges.add(new edge(nodeMatrix[0][0][k-1],nodeMatrix[0][0][k],0));
-                nodeMatrix[0][0][k].computeScores(sinknode,sourcenode);
-            }
-
-
-            for(int i=1;i<=firstProtein.length();i++){
-            for(int j=1;j<=secondProtein.length();j++){
-                int score=0;   
-                alledges.add(new edge(nodeMatrix[i-1][j-1][0],nodeMatrix[i][j][0],score));
-                alledges.add(new edge(nodeMatrix[i-1][j][0],nodeMatrix[i][j][0],score));
-                alledges.add(new edge(nodeMatrix[i][j-1][0],nodeMatrix[i][j][0],score));
-                nodeMatrix[i][j][0].computeScores(sinknode,sourcenode);
-            }
-         }
-            for(int k=1;k<=thirdProtein.length();k++){
-                for(int i=1;i<=firstProtein.length();i++){
-                    int score=0;   
-                    alledges.add(new edge(nodeMatrix[i-1][0][k-1],nodeMatrix[i][0][k],score));
-                    alledges.add(new edge(nodeMatrix[i-1][0][k],nodeMatrix[i][0][k],score));
-                    alledges.add(new edge(nodeMatrix[i][0][k-1],nodeMatrix[i][0][k],score));
-                    nodeMatrix[i][0][k].computeScores(sinknode,sourcenode);
-            }
-         }
-            
-        for(int j=1;j<=secondProtein.length();j++){
-            for(int k=1;k<=thirdProtein.length();k++){
-                int score=0;   
-                alledges.add(new edge(nodeMatrix[0][j-1][k-1],nodeMatrix[0][j][k],score));
-                alledges.add(new edge(nodeMatrix[0][j][k-1],nodeMatrix[0][j][k],score));
-                alledges.add(new edge(nodeMatrix[0][j-1][k],nodeMatrix[0][j][k],score));
-                nodeMatrix[0][j][k].computeScores(sinknode,sourcenode);
-            }
-         }
-
             for(int i=1;i<n;i++){
                 for(int j=1;j<m;j++){
                     for(int k=1;k<o;k++){
@@ -705,214 +675,157 @@ public class Bioinformatics {
                         char kchar=thirdProtein.charAt(k-1);
                         int score=0;
                         if(kchar==jchar && jchar==ichar && kchar==ichar)
-                        score=1;
-                        alledges.add(new edge(nodeMatrix[i-1][j-1][k-1],nodeMatrix[i][j][k],score));
-                        alledges.add(new edge(nodeMatrix[i-1][j-1][k],nodeMatrix[i][j][k],0));
-                        alledges.add(new edge(nodeMatrix[i-1][j][k-1],nodeMatrix[i][j][k],0));
-                        alledges.add(new edge(nodeMatrix[i][j-1][k-1],nodeMatrix[i][j][k],0));
-                        alledges.add(new edge(nodeMatrix[i-1][j-1][k],nodeMatrix[i][j][k],0));
-                        alledges.add(new edge(nodeMatrix[i-1][j][k-1],nodeMatrix[i][j][k],0));
-                        alledges.add(new edge(nodeMatrix[i][j-1][k-1],nodeMatrix[i][j][k],0));
-                        nodeMatrix[i][j][k].computeScores(sinknode, sourcenode);
+                            score=1;
+                        alledges.add(new edge(nodeMatrix[i-1][j-1][k-1] , nodeMatrix[i][j][k],score));
                     }
-                }
-            }
-
-            StringBuilder firstProteinAlign=new StringBuilder();
-            StringBuilder secondProteinAlign=new StringBuilder();
-            node currentNode=sinknode;
-            while(currentNode!=null){
-                
-                if(currentNode.getBacktrackNode()!=null){
-                    int backi,backj,i,j,k;            
-                    i=currentNode.getI();
-                    j=currentNode.getJ();
-                    k=currentNode.getK();
-                    backi=currentNode.getBacktrackNode().getI();
-                    backj=currentNode.getBacktrackNode().getJ();
-                    if(backi==i-1 && backj==j){
-                        secondProteinAlign.append("-");
-                        firstProteinAlign.append(firstProtein.charAt(i-1));
-                    }
-                    if(backi==i && backj==j-1){
-                        firstProteinAlign.append("-");
-                        secondProteinAlign.append(secondProtein.charAt(j-1));
-                    }
-                    if(backi==i-1 && backj==j-1){
-                        firstProteinAlign.append(firstProtein.charAt(i-1));
-                        secondProteinAlign.append(secondProtein.charAt(j-1));
-                    }
-                    
-                }
-                currentNode=currentNode.getBacktrackNode();
-            }
-            
-
-            System.out.println(sinknode.getScore());
-            System.out.println((n)*(m)*(o)*7+3*((n)*m + (m)*o + (o)*n));
-            System.out.println(alledges.size());
-            
-            
-            /*
-            int gapOpeningPenalty=0;
-            int gapExtensionPenalty=1;
-            //Creating PrintWriter for writing to output file
-            PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
-            //Creating new Object to handle this string
-            Bioinformatics3 newText=new Bioinformatics3();
-            int n=firstProtein.length()+1;
-            int m=secondProtein.length()+1;
-            node[][] middleNodeMatrix=new node[n][m];
-            node[][] upperNodeMatrix=new node[n][m];
-            node[][] lowerNodeMatrix=new node[n][m];
-            
-            //Initializing all nodes
-            for(int i=0;i<n;i++){
-                for(int j=0;j<m;j++){
-                    middleNodeMatrix[i][j]=new node(i,j,middle);
-                    upperNodeMatrix[i][j]=new node(i,j,upper);
-                    lowerNodeMatrix[i][j]=new node(i,j,lower);
-                }
-            }
-            
-            node sourcenode=middleNodeMatrix[0][0];
-            node sinknode=middleNodeMatrix[n-1][m-1];
-            
-            List <edge>alledges=new <edge>ArrayList();
-            //Adding Diagonal Edges to middleNodeMatrix
-            for(int i=1;i<n;i++){
-                for(int j=1;j<m;j++){
-                    char rowchar=firstProtein.charAt(i-1);
-                    char columnchar=secondProtein.charAt(j-1);
-                    int row=getPos(rowchar,alphabets);
-                    int column=getPos(columnchar,alphabets);
-                    int score=scoringMatrix[row][column];
-                    alledges.add(new edge(middleNodeMatrix[i-1][j-1],middleNodeMatrix[i][j],score));
-                }
-            }
-                     
-            
-            //Adding vertical edges to lowerNodeMatrix
-            for(int i=1;i<n;i++){
-                for(int j=0;j<m;j++){
-                    alledges.add(new edge(lowerNodeMatrix[i-1][j],lowerNodeMatrix[i][j],-1*gapExtensionPenalty));
-                }
-            }
-            
-            //Adding horizontal edges to upperNodeMatrix
-            for(int i=0;i<n;i++){
-                for(int j=1;j<m;j++){
-                    alledges.add(new edge(upperNodeMatrix[i][j-1],upperNodeMatrix[i][j],-1*gapExtensionPenalty));
-                }
-            }
-            
-            //Adding edges with gapOpening penalty to lower from middle and edges with zero weights from lower to middle
-            
-            for(int i=0;i<n-1;i++){
-                for(int j=0;j<m;j++){
-                    alledges.add(new edge(middleNodeMatrix[i][j],lowerNodeMatrix[i+1][j],-1*gapOpeningPenalty));
-                    alledges.add(new edge(lowerNodeMatrix[i+1][j],middleNodeMatrix[i+1][j],0));
-                }
-            }
-            
-            for(int i=0;i<n;i++){
-                for(int j=0;j<m-1;j++){
-                   alledges.add(new edge(middleNodeMatrix[i][j],upperNodeMatrix[i][j+1],-1*gapOpeningPenalty));
-                   alledges.add(new edge(upperNodeMatrix[i][j+1],middleNodeMatrix[i][j+1],0));
                 }
             }
             
             List<node> adjacencyList=newText.getAdjacencyList(node.allnodes);
             
-            
-            //Repopulating nodes:
             alledges=new ArrayList();
-
-            //Adding Diagonal Edges to middleNodeMatrix
-            for(int i=1;i<n;i++){
-                for(int j=1;j<m;j++){
-                    char rowchar=firstProtein.charAt(i-1);
-                    char columnchar=secondProtein.charAt(j-1);
-                    int row=getPos(rowchar,alphabets);
-                    int column=getPos(columnchar,alphabets);
-                    int score=scoringMatrix[row][column];
-                    alledges.add(new edge(middleNodeMatrix[i-1][j-1],middleNodeMatrix[i][j],score));
-                }
-            }
-
-            //Adding vertical edges to lowerNodeMatrix
-            for(int i=1;i<n;i++){
-                for(int j=0;j<m;j++){
-                    alledges.add(new edge(lowerNodeMatrix[i-1][j],lowerNodeMatrix[i][j],-1*gapExtensionPenalty));
-                }
-            }
-            
-            //Adding horizontal edges to upperNodeMatrix
+            //Repopulating Edges:
             for(int i=0;i<n;i++){
                 for(int j=1;j<m;j++){
-                    alledges.add(new edge(upperNodeMatrix[i][j-1],upperNodeMatrix[i][j],-1*gapExtensionPenalty));
+                    for(int k=0;k<o;k++){
+                    alledges.add(new edge(nodeMatrix[i][j-1][k] , nodeMatrix[i][j][k],0));
+                    }
                 }
-            }
+            }    
             
-            //Adding edges with gapOpening penalty to lower from middle and edges with zero weights from lower to middle
-            
-            for(int i=0;i<n-1;i++){
+            for(int i=1;i<n;i++){
                 for(int j=0;j<m;j++){
-                    alledges.add(new edge(middleNodeMatrix[i][j],lowerNodeMatrix[i+1][j],-1*gapOpeningPenalty));
-                    alledges.add(new edge(lowerNodeMatrix[i+1][j],middleNodeMatrix[i+1][j],0));
+                    for(int k=0;k<o;k++){
+                    alledges.add(new edge(nodeMatrix[i-1][j][k] , nodeMatrix[i][j][k],0));
+                    }
                 }
             }
             
             for(int i=0;i<n;i++){
-                for(int j=0;j<m-1;j++){
-                   alledges.add(new edge(middleNodeMatrix[i][j],upperNodeMatrix[i][j+1],-1*gapOpeningPenalty));
-                   alledges.add(new edge(upperNodeMatrix[i][j+1],middleNodeMatrix[i][j+1],0));
+                for(int j=0;j<m;j++){
+                    for(int k=1;k<o;k++){
+                        alledges.add(new edge(nodeMatrix[i][j][k-1] , nodeMatrix[i][j][k],0));
+                    }
+                }
+            }    
+
+            for(int i=1;i<n;i++){
+                for(int j=1;j<m;j++){
+                    for(int k=0;k<o;k++){
+                        alledges.add(new edge(nodeMatrix[i-1][j-1][k] , nodeMatrix[i][j][k],0));
+                    }
                 }
             }
             
+            for(int i=0;i<n;i++){
+                for(int j=1;j<m;j++){
+                    for(int k=1;k<o;k++){
+                        alledges.add(new edge(nodeMatrix[i][j-1][k-1] , nodeMatrix[i][j][k],0));
+                    }
+                }
+            }
+                      
+            for(int i=1;i<n;i++){
+                for(int j=0;j<m;j++){
+                    for(int k=1;k<o;k++){
+                        alledges.add(new edge(nodeMatrix[i-1][j][k-1] , nodeMatrix[i][j][k],0));
+                    }
+                }
+            }
+            
+            for(int i=1;i<n;i++){
+                for(int j=1;j<m;j++){
+                    for(int k=1;k<o;k++){
+                        char ichar=firstProtein.charAt(i-1);
+                        char jchar=secondProtein.charAt(j-1);
+                        char kchar=thirdProtein.charAt(k-1);
+                        int score=0;
+                        if(kchar==jchar && jchar==ichar && kchar==ichar)
+                            score=1;
+                        alledges.add(new edge(nodeMatrix[i-1][j-1][k-1] , nodeMatrix[i][j][k],score));
+                    }
+                }
+            }
+
             for(int i=0;i<adjacencyList.size();i++){
                 node temp=(node)adjacencyList.get(i);
                 temp.computeScores(sinknode, sourcenode);
             }
             
-            
-            List allnodes=newText.stripEverythingButTheCore(node.allnodes, sinknode, sourcenode);
+            out.println(sinknode.getScore());
             
             StringBuilder firstProteinAlign=new StringBuilder();
             StringBuilder secondProteinAlign=new StringBuilder();
+            StringBuilder thirdProteinAlign=new StringBuilder();
+            
             node currentNode=sinknode;
             while(currentNode!=null){
                 
                 if(currentNode.getBacktrackNode()!=null){
-                    int backi,backj,i,j;            
+                    int backi,backj,backk,i,j,k;            
                     i=currentNode.getI();
                     j=currentNode.getJ();
+                    k=currentNode.getK();
                     backi=currentNode.getBacktrackNode().getI();
                     backj=currentNode.getBacktrackNode().getJ();
-                    if(backi==i-1 && backj==j){
-                        secondProteinAlign.append("-");
-                        firstProteinAlign.append(firstProtein.charAt(i-1));
-                    }
-                    if(backi==i && backj==j-1){
+                    backk=currentNode.getBacktrackNode().getK();
+                    System.out.print(Integer.toString(i)+','+Integer.toString(j)+','+Integer.toString(k)+"->");
+                    System.out.print(Integer.toString(backi)+','+Integer.toString(backj)+','+Integer.toString(backk)+" Score:");
+                    System.out.println(currentNode.getScore());
+                    
+                                       
+                    if(backi==i && backj==j-1 && backk==k){
                         firstProteinAlign.append("-");
                         secondProteinAlign.append(secondProtein.charAt(j-1));
-                    }
-                    if(backi==i-1 && backj==j-1){
-                        firstProteinAlign.append(firstProtein.charAt(i-1));
-                        secondProteinAlign.append(secondProtein.charAt(j-1));
+                        thirdProteinAlign.append("-");
                     }
                     
+                    if(backi==i-1 && backj==j && backk==k){
+                        firstProteinAlign.append(firstProtein.charAt(i-1));
+                        secondProteinAlign.append("-");
+                        thirdProteinAlign.append("-");
+                    }
+                    
+                    if(backi==i && backj==j && backk==k-1){
+                        firstProteinAlign.append("-");
+                        secondProteinAlign.append("-");
+                        thirdProteinAlign.append(thirdProtein.charAt(k-1));
+                    }
+                    
+                    if(backi==i-1 && backj==j-1 && backk==k){
+                        firstProteinAlign.append(firstProtein.charAt(i-1));
+                        secondProteinAlign.append(secondProtein.charAt(j-1));
+                        thirdProteinAlign.append("-");
+                    }
+                    
+                    if(backi==i && backj==j-1 && backk==k-1){
+                        firstProteinAlign.append("-");
+                        secondProteinAlign.append(secondProtein.charAt(j-1));
+                        thirdProteinAlign.append(thirdProtein.charAt(k-1));
+                    }
+                    
+                    if(backi==i-1 && backj==j && backk==k-1){
+                        firstProteinAlign.append(firstProtein.charAt(i-1));
+                        secondProteinAlign.append("-");
+                        thirdProteinAlign.append(thirdProtein.charAt(k-1));
+                    }
+                    
+                    if(backi==i-1 && backj==j-1 && backk==k-1){
+                        firstProteinAlign.append(firstProtein.charAt(i-1));
+                        secondProteinAlign.append(secondProtein.charAt(j-1));
+                        thirdProteinAlign.append(thirdProtein.charAt(k-1));
+                    }
                 }
                 currentNode=currentNode.getBacktrackNode();
-
             }
-            //Thank you past mistakes you are awesome!
-            out.println(sinknode.getScore());
+            
             out.println(firstProteinAlign.reverse().toString());
             out.println(secondProteinAlign.reverse().toString());
+            out.println(thirdProteinAlign.reverse().toString());
             
+
             out.close();
-            */        
+                
         }
         
         
