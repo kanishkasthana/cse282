@@ -557,14 +557,17 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("testdata.txt");
+            File newFile=new File("rosalind_4a.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
             while ((line = reader.readLine()) != null) {
              inputs.add(line);
             }
-            
+            StringBuilder final=new StringBuilder();
+            for(int i=0;i<inputs.size();i++){
+                
+            }
             int k=Integer.parseInt(inputs.get(0));
             String text=inputs.get(1);
             //k=5;
@@ -574,12 +577,11 @@ public class Bioinformatics {
             System.out.println(text.length()-k+1);
             //Creating new Object to handle this string
             Bioinformatics4 newText=new Bioinformatics4();
-            String[] orderedStrings=newText.stringComposition(k, text);
+            List <String>orderedStrings=newText.stringComposition(k, text);
             
-            for(int i=0;i<orderedStrings.length;i++){
-                out.println(orderedStrings[i]);
+            for(int i=0;i<orderedStrings.size();i++){
+                out.println(orderedStrings.get(i));
             }
-            System.out.println(orderedStrings.length);
             out.close();
                 
         }

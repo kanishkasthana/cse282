@@ -13,20 +13,14 @@ import java.util.*;
  * @author kanis_000
  */
 public class Bioinformatics4 extends Bioinformatics3{
-    public String[] stringComposition(int k,String text){
-        String[] orderedStrings=new String[text.length()-k+1];
-        long[] kmers=new long[text.length()-k+1];
+    public List<String> stringComposition(int k,String text){
+        List <String>orderedStrings=new <String>ArrayList();
         
         for(int i=0;i<=text.length()-k;i++){
             String pattern=text.substring(i, i+k);
-            kmers[i]=patternToNumberLong(pattern);
-            System.out.println(kmers[i]);
+            orderedStrings.add(pattern);
         }
-        //May need to implement faster sort algorithm in the future;
-        kmers=sort(kmers);
-        for(int i=0;i<kmers.length;i++){
-            orderedStrings[i]=numberToPatternLong(kmers[i],k);
-        }
+        orderedStrings=mergeSort(orderedStrings);
         return orderedStrings;
     }
     
@@ -112,5 +106,51 @@ public class Bioinformatics4 extends Bioinformatics3{
     
     public long remainder(long dividend, long divisor){
      return dividend%divisor;
+    }
+    
+    //Implementing merge for mergesort
+    public static List merge(List list1,List list2){
+        List sortedList=new ArrayList();
+        int firstStringPos=0,secondStringPos=0;
+        String current1,current2;
+        
+        while(firstStringPos<list1.size() && secondStringPos<list2.size()){
+            current1=(String)list1.get(firstStringPos);
+            current2=(String)list2.get(secondStringPos);
+            if(current1.compareTo(current2)<0){
+                firstStringPos++;
+                sortedList.add(current1);
+            }
+            else{
+                secondStringPos++;
+                sortedList.add(current2);
+            }
+        }
+        
+        
+        for(int i=firstStringPos;i<list1.size();i++){
+            sortedList.add(list1.get(i));
+        }
+        
+        
+        for(int i=secondStringPos;i<list2.size();i++){
+            sortedList.add(list2.get(i));
+        }
+        
+        return sortedList;
+    }
+    
+    public static List mergeSort(List list){
+        if(list.size()==1){
+            return list;
+        }
+        int firstHalfIndex=list.size()/2;
+        List firstHalf=list.subList(0, firstHalfIndex);
+        List secondHalf=list.subList(firstHalfIndex,list.size());
+        List sortedFirstHalf=mergeSort(firstHalf);
+        List sortedSecondHalf=mergeSort(secondHalf);
+        List sortedList=merge(sortedFirstHalf,sortedSecondHalf);
+        
+        return sortedList;
     }
 }
