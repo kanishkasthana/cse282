@@ -557,273 +557,29 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("dataset_251_5.txt");
+            File newFile=new File("testdata.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
             while ((line = reader.readLine()) != null) {
              inputs.add(line);
             }
-            File matrixFile=new File("BLOSUM62.txt");
-            FileReader matrixFileReader=new FileReader(matrixFile);
-            BufferedReader matrixReader= new BufferedReader(matrixFileReader);
-            String matrixLine=null;
-            while((matrixLine=matrixReader.readLine())!=null){
-                matrixInputs.add(matrixLine);
-            }
             
-            StringTokenizer letters=new StringTokenizer(matrixInputs.get(0));
-            List alphabets=new ArrayList();
-            //Reading in Alphabets            
-            while(letters.hasMoreTokens())
-            {
-                alphabets.add(letters.nextToken());
-            }
-            //Creating Scoring Matrix;
-            int[][] scoringMatrix=new int[alphabets.size()][alphabets.size()];
-            for(int i=1;i<matrixInputs.size();i++){
-                StringTokenizer row=new StringTokenizer(matrixInputs.get(i));
-                char letter=row.nextToken().toString().charAt(0);
-                int j=0;
-                while(row.hasMoreTokens()){
-                    scoringMatrix[i-1][j++]=Integer.parseInt(row.nextToken().toString());
-                }    
-            }
-            
-            String firstProtein=inputs.get(0);
-            String secondProtein=inputs.get(1);
-            String thirdProtein=inputs.get(2);
-            
-            //firstProtein="ATATCCG";
-            //secondProtein="TCCGA";
-            //sthirdProtein="ATGTACTG";
-            //Creating PrintWriter for writing to output file
+            int k=Integer.parseInt(inputs.get(0));
+            String text=inputs.get(1);
+            //k=5;
+            //text="CAATCCAAC";
+            System.out.println(k);
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
+            System.out.println(text.length()-k+1);
             //Creating new Object to handle this string
-            Bioinformatics3 newText=new Bioinformatics3();
-            int n=firstProtein.length()+1;
-            int m=secondProtein.length()+1;
-            int o=thirdProtein.length()+1;
-            node[][][] nodeMatrix=new node[n][m][o];
-            //Initializing all nodes
-            for(int i=0;i<n;i++){
-                for(int j=0;j<m;j++){
-                    for(int k=0;k<o;k++){
-                        nodeMatrix[i][j][k]=new node(i,j,k);
-                    }
-                }
+            Bioinformatics4 newText=new Bioinformatics4();
+            String[] orderedStrings=newText.stringComposition(k, text);
+            
+            for(int i=0;i<orderedStrings.length;i++){
+                out.println(orderedStrings[i]);
             }
-            node sourcenode=nodeMatrix[0][0][0];
-            node sinknode=nodeMatrix[n-1][m-1][o-1];
-            
-            List <edge>alledges=new <edge>ArrayList();
-            
-            //Creating all 7 edges 
-            for(int i=0;i<n;i++){
-                for(int j=1;j<m;j++){
-                    for(int k=0;k<o;k++){
-                    alledges.add(new edge(nodeMatrix[i][j-1][k] , nodeMatrix[i][j][k],0));
-                    }
-                }
-            }    
-            
-            for(int i=1;i<n;i++){
-                for(int j=0;j<m;j++){
-                    for(int k=0;k<o;k++){
-                    alledges.add(new edge(nodeMatrix[i-1][j][k] , nodeMatrix[i][j][k],0));
-                    }
-                }
-            }
-            
-            for(int i=0;i<n;i++){
-                for(int j=0;j<m;j++){
-                    for(int k=1;k<o;k++){
-                        alledges.add(new edge(nodeMatrix[i][j][k-1] , nodeMatrix[i][j][k],0));
-                    }
-                }
-            }    
-
-            for(int i=1;i<n;i++){
-                for(int j=1;j<m;j++){
-                    for(int k=0;k<o;k++){
-                        alledges.add(new edge(nodeMatrix[i-1][j-1][k] , nodeMatrix[i][j][k],0));
-                    }
-                }
-            }
-            
-            for(int i=0;i<n;i++){
-                for(int j=1;j<m;j++){
-                    for(int k=1;k<o;k++){
-                        alledges.add(new edge(nodeMatrix[i][j-1][k-1] , nodeMatrix[i][j][k],0));
-                    }
-                }
-            }
-                      
-            for(int i=1;i<n;i++){
-                for(int j=0;j<m;j++){
-                    for(int k=1;k<o;k++){
-                        alledges.add(new edge(nodeMatrix[i-1][j][k-1] , nodeMatrix[i][j][k],0));
-                    }
-                }
-            }
-            
-            for(int i=1;i<n;i++){
-                for(int j=1;j<m;j++){
-                    for(int k=1;k<o;k++){
-                        char ichar=firstProtein.charAt(i-1);
-                        char jchar=secondProtein.charAt(j-1);
-                        char kchar=thirdProtein.charAt(k-1);
-                        int score=0;
-                        if(kchar==jchar && jchar==ichar && kchar==ichar)
-                            score=1;
-                        alledges.add(new edge(nodeMatrix[i-1][j-1][k-1] , nodeMatrix[i][j][k],score));
-                    }
-                }
-            }
-            
-            List<node> adjacencyList=newText.getAdjacencyList(node.allnodes);
-            
-            alledges=new ArrayList();
-            //Repopulating Edges:
-            for(int i=0;i<n;i++){
-                for(int j=1;j<m;j++){
-                    for(int k=0;k<o;k++){
-                    alledges.add(new edge(nodeMatrix[i][j-1][k] , nodeMatrix[i][j][k],0));
-                    }
-                }
-            }    
-            
-            for(int i=1;i<n;i++){
-                for(int j=0;j<m;j++){
-                    for(int k=0;k<o;k++){
-                    alledges.add(new edge(nodeMatrix[i-1][j][k] , nodeMatrix[i][j][k],0));
-                    }
-                }
-            }
-            
-            for(int i=0;i<n;i++){
-                for(int j=0;j<m;j++){
-                    for(int k=1;k<o;k++){
-                        alledges.add(new edge(nodeMatrix[i][j][k-1] , nodeMatrix[i][j][k],0));
-                    }
-                }
-            }    
-
-            for(int i=1;i<n;i++){
-                for(int j=1;j<m;j++){
-                    for(int k=0;k<o;k++){
-                        alledges.add(new edge(nodeMatrix[i-1][j-1][k] , nodeMatrix[i][j][k],0));
-                    }
-                }
-            }
-            
-            for(int i=0;i<n;i++){
-                for(int j=1;j<m;j++){
-                    for(int k=1;k<o;k++){
-                        alledges.add(new edge(nodeMatrix[i][j-1][k-1] , nodeMatrix[i][j][k],0));
-                    }
-                }
-            }
-                      
-            for(int i=1;i<n;i++){
-                for(int j=0;j<m;j++){
-                    for(int k=1;k<o;k++){
-                        alledges.add(new edge(nodeMatrix[i-1][j][k-1] , nodeMatrix[i][j][k],0));
-                    }
-                }
-            }
-            
-            for(int i=1;i<n;i++){
-                for(int j=1;j<m;j++){
-                    for(int k=1;k<o;k++){
-                        char ichar=firstProtein.charAt(i-1);
-                        char jchar=secondProtein.charAt(j-1);
-                        char kchar=thirdProtein.charAt(k-1);
-                        int score=0;
-                        if(kchar==jchar && jchar==ichar && kchar==ichar)
-                            score=1;
-                        alledges.add(new edge(nodeMatrix[i-1][j-1][k-1] , nodeMatrix[i][j][k],score));
-                    }
-                }
-            }
-
-            for(int i=0;i<adjacencyList.size();i++){
-                node temp=(node)adjacencyList.get(i);
-                temp.computeScores(sinknode, sourcenode);
-            }
-            
-            out.println(sinknode.getScore());
-            
-            StringBuilder firstProteinAlign=new StringBuilder();
-            StringBuilder secondProteinAlign=new StringBuilder();
-            StringBuilder thirdProteinAlign=new StringBuilder();
-            
-            node currentNode=sinknode;
-            while(currentNode!=null){
-                
-                if(currentNode.getBacktrackNode()!=null){
-                    int backi,backj,backk,i,j,k;            
-                    i=currentNode.getI();
-                    j=currentNode.getJ();
-                    k=currentNode.getK();
-                    backi=currentNode.getBacktrackNode().getI();
-                    backj=currentNode.getBacktrackNode().getJ();
-                    backk=currentNode.getBacktrackNode().getK();
-                    System.out.print(Integer.toString(i)+','+Integer.toString(j)+','+Integer.toString(k)+"->");
-                    System.out.print(Integer.toString(backi)+','+Integer.toString(backj)+','+Integer.toString(backk)+" Score:");
-                    System.out.println(currentNode.getScore());
-                    
-                                       
-                    if(backi==i && backj==j-1 && backk==k){
-                        firstProteinAlign.append("-");
-                        secondProteinAlign.append(secondProtein.charAt(j-1));
-                        thirdProteinAlign.append("-");
-                    }
-                    
-                    if(backi==i-1 && backj==j && backk==k){
-                        firstProteinAlign.append(firstProtein.charAt(i-1));
-                        secondProteinAlign.append("-");
-                        thirdProteinAlign.append("-");
-                    }
-                    
-                    if(backi==i && backj==j && backk==k-1){
-                        firstProteinAlign.append("-");
-                        secondProteinAlign.append("-");
-                        thirdProteinAlign.append(thirdProtein.charAt(k-1));
-                    }
-                    
-                    if(backi==i-1 && backj==j-1 && backk==k){
-                        firstProteinAlign.append(firstProtein.charAt(i-1));
-                        secondProteinAlign.append(secondProtein.charAt(j-1));
-                        thirdProteinAlign.append("-");
-                    }
-                    
-                    if(backi==i && backj==j-1 && backk==k-1){
-                        firstProteinAlign.append("-");
-                        secondProteinAlign.append(secondProtein.charAt(j-1));
-                        thirdProteinAlign.append(thirdProtein.charAt(k-1));
-                    }
-                    
-                    if(backi==i-1 && backj==j && backk==k-1){
-                        firstProteinAlign.append(firstProtein.charAt(i-1));
-                        secondProteinAlign.append("-");
-                        thirdProteinAlign.append(thirdProtein.charAt(k-1));
-                    }
-                    
-                    if(backi==i-1 && backj==j-1 && backk==k-1){
-                        firstProteinAlign.append(firstProtein.charAt(i-1));
-                        secondProteinAlign.append(secondProtein.charAt(j-1));
-                        thirdProteinAlign.append(thirdProtein.charAt(k-1));
-                    }
-                }
-                currentNode=currentNode.getBacktrackNode();
-            }
-            
-            out.println(firstProteinAlign.reverse().toString());
-            out.println(secondProteinAlign.reverse().toString());
-            out.println(thirdProteinAlign.reverse().toString());
-            
-
+            System.out.println(orderedStrings.length);
             out.close();
                 
         }
