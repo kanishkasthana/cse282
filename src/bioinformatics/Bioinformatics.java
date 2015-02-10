@@ -557,31 +557,22 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_4a.txt");
+            File newFile=new File("rosalind_4b.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
             while ((line = reader.readLine()) != null) {
              inputs.add(line);
             }
-            StringBuilder final=new StringBuilder();
-            for(int i=0;i<inputs.size();i++){
-                
+            StringBuilder finalString=new StringBuilder(inputs.get(0));
+            for(int i=1;i<inputs.size();i++){
+                finalString.append(inputs.get(i).charAt(inputs.get(i).length()-1));
             }
-            int k=Integer.parseInt(inputs.get(0));
-            String text=inputs.get(1);
-            //k=5;
-            //text="CAATCCAAC";
-            System.out.println(k);
-            PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
-            System.out.println(text.length()-k+1);
-            //Creating new Object to handle this string
-            Bioinformatics4 newText=new Bioinformatics4();
-            List <String>orderedStrings=newText.stringComposition(k, text);
             
-            for(int i=0;i<orderedStrings.size();i++){
-                out.println(orderedStrings.get(i));
-            }
+            PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
+            
+            Bioinformatics4 newText=new Bioinformatics4();
+            out.println(finalString.toString());
             out.close();
                 
         }
