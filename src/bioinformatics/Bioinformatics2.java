@@ -134,6 +134,26 @@ public class Bioinformatics2 extends Bioinformatics {
         return distance;
     }
     
+    public int maximumDistanceBetweenPatternAndStrings(String pattern,List dna){
+        int distance=0,k=pattern.length();
+        int hammingDistance=k;
+        int maxdistance=0;
+        String kmer;
+        for(Object text:dna){
+            hammingDistance=k;
+            for(int i=0;i<=text.toString().length()-k;i++){
+                kmer=text.toString().substring(i,i+k);
+                if(hammingDistance>hammingDistance(kmer,pattern)){
+                    hammingDistance=hammingDistance(kmer,pattern);
+                }
+            }
+            if(maxdistance<hammingDistance){
+                maxdistance=hammingDistance;
+            }
+        }
+        return maxdistance;
+    }
+    
     public String medianString(List dna,int k){
        String median = null,pattern;
        int distance=dna.size()*k;
@@ -148,6 +168,24 @@ public class Bioinformatics2 extends Bioinformatics {
        }
        
        return median;
+    }
+    
+    public String minimaxString(List dna,int k){
+       String minimax = numberToPattern(0,k),pattern;
+       int distance=1000000;
+       int end=power(4,k),i,j;
+       
+       for(i=0;i<=end-1;i++){
+           pattern=numberToPattern(i,k);
+           System.out.println(distanceBetweenPatternAndStrings(pattern,dna));
+           if(distance>=(distanceBetweenPatternAndStrings(pattern,dna)+maximumDistanceBetweenPatternAndStrings(pattern,dna))){
+               distance=distanceBetweenPatternAndStrings(pattern,dna)+maximumDistanceBetweenPatternAndStrings(pattern,dna);
+               System.out.println("This runs");
+               minimax=pattern;
+           }
+       }
+       
+       return minimax;
     }
     
     public static void main2(){

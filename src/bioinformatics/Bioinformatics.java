@@ -551,7 +551,7 @@ public class Bioinformatics {
             //Storing inputs in list inputs
             List inputs= new ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_3b.txt");
+            File newFile=new File("rosalind_m5.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -568,8 +568,10 @@ public class Bioinformatics {
             List dna= new ArrayList();
             for(int i=1;i<inputs.size();i++){
               dna.add(inputs.get(i).toString());
+              System.out.println(inputs.get(i).toString());
             }
-            String median=newText.medianString(dna, k);
+            System.out.println(k);
+            String median=newText.minimaxString(dna, k);
             
             out.print(median);
             
