@@ -273,6 +273,42 @@ public class Bioinformatics {
       return frequentPatterns;
     }
     
+    public List mostFrequentPatternsWithoutOverLap(String text, int k){
+     int end=power(4,k),i,j;
+     int[] frequencyArray= new int[end];
+     int[] lastEndPositionArray= new int[end];
+     
+     String patternd;
+     
+     for(i=0;i<=end-1;i++){
+         frequencyArray[i]=0;
+         lastEndPositionArray[i]=5000000;
+     }
+     
+     for(i=0;i<=text.length()-k;i++){
+         patternd=text.substring(i,i+k);
+         j=patternToNumber(patternd);
+          if(lastEndPositionArray[j]<i){
+              frequencyArray[j]++;
+         }
+          lastEndPositionArray[j]=i+k;
+     }
+     List frequentPatterns=new ArrayList();
+     int maxCount=maximum(frequencyArray);
+     System.out.println(maxCount);
+     
+     for(i=0;i<=end-1;i++){
+         if(frequencyArray[i]==maxCount){
+          patternd=numberToPattern(i,k);
+          frequentPatterns.add(patternd);
+         }
+     }
+      this.frequencyArray=frequencyArray;
+      
+      return frequentPatterns;
+    }
+    
+    
     public void fasterFrequentWords(int k){
      List frequentPatterns=new ArrayList();
      computingFrequencies(k);
@@ -507,7 +543,7 @@ public class Bioinformatics {
             //Storing inputs in list inputs
             List inputs= new ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_1g.txt");
+            File newFile=new File("rosalind_m4.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -518,12 +554,11 @@ public class Bioinformatics {
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             //Creating new Object to handle this string
             
-            Bioinformatics newText=new Bioinformatics(inputs.get(0).toString());
-            String secondLine=inputs.get(1).toString();
-            StringTokenizer st=new StringTokenizer(secondLine);
-            int k=Integer.parseInt(st.nextToken());
-            int d=Integer.parseInt(st.nextToken());
-            List patterns=newText.frequentWordsWithMismatches(k, d);
+            Bioinformatics newText=new Bioinformatics();
+            String text=inputs.get(0).toString();
+            int k=Integer.parseInt(inputs.get(1).toString());
+           
+            List patterns=newText.mostFrequentPatternsWithoutOverLap(text, k);
             
             for(Object obj:patterns){
                 out.print(obj.toString());
