@@ -553,7 +553,7 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("dataset_247_3.txt");
+            File newFile=new File("testdata.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -590,9 +590,16 @@ public class Bioinformatics {
             
             String firstProtein=inputs.get(0);
             String secondProtein=inputs.get(1);
+            int I=Integer.parseInt(inputs.get(2));
+            int J=Integer.parseInt(inputs.get(3));
+            
+            System.out.println(firstProtein);
+            System.out.println(secondProtein);
+            System.out.println(I);
+            System.out.println(J);
             //firstProtein="PLEASANTLY";
             //secondProtein="MEANLY";
-            int gapPenalty=5;
+            int gapPenalty=1;
             //Creating PrintWriter for writing to output file
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             //Creating new Object to handle this string
