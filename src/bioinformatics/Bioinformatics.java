@@ -564,15 +564,24 @@ public class Bioinformatics {
             while ((line = reader.readLine()) != null) {
              inputs.add(line);
             }
-            StringBuilder finalString=new StringBuilder(inputs.get(0));
-            for(int i=1;i<inputs.size();i++){
-                finalString.append(inputs.get(i).charAt(inputs.get(i).length()-1));
+                        
+            PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
+            Bioinformatics4 newText=new Bioinformatics4();
+            
+            List <String> orderedStrings=Bioinformatics4.mergeSort(inputs);
+            
+            List <node>allnodes=newText.getOverlapGraph(orderedStrings);
+            
+            for(int i=0;i<allnodes.size();i++){
+                node tempNode=allnodes.get(i);
+                for(int j=0;j<tempNode.getChildren().size();j++){
+                    node tempChild=(node)tempNode.getChildren().get(j);
+                    out.print(tempNode.getNodeString());
+                    out.print(" -> ");
+                    out.println(tempChild.getNodeString());
+                }
             }
             
-            PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
-            
-            Bioinformatics4 newText=new Bioinformatics4();
-            out.println(finalString.toString());
             out.close();
                 
         }

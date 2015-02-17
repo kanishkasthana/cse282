@@ -153,4 +153,28 @@ public class Bioinformatics4 extends Bioinformatics3{
         
         return sortedList;
     }
+    
+    public List<node> getOverlapGraph(List<String> orderedStrings){
+        List<node> nodes=new <node>ArrayList();
+        
+        for(int i=0;i<orderedStrings.size();i++){
+            node newNode=new node(orderedStrings.get(i));
+            nodes.add(newNode);
+        }
+        
+        for(int i=0;i<nodes.size();i++){
+            node tempNode=nodes.get(i);
+            for(int j=0;j<nodes.size();j++){
+                node tempNode2=nodes.get(j);
+                String subString1,subString2;
+                subString1=tempNode.getNodeString().substring(1);
+                subString2=tempNode2.getNodeString().substring(0,tempNode2.getNodeString().length()-1);
+                if(subString1.equals(subString2)){
+                    edge newEdge=new edge(tempNode,tempNode2,0);
+                }
+                
+            }
+        }
+        return nodes;
+    }
 }

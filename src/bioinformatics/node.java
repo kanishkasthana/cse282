@@ -23,6 +23,7 @@ public class node {
     List parents=new ArrayList();
     List children=new ArrayList();
     node backtrackNode=null;
+    String nodeString=null;
     
     public node(int value){
         this.value=value;
@@ -50,6 +51,15 @@ public class node {
         this.setScore(0);
     }
     
+    public node(String nodeString){
+        this.nodeString=nodeString;
+        allnodes.add(this);
+        this.setScore(0);
+    }
+    
+    public String getNodeString(){
+        return this.nodeString;
+    }
     
     public int getNodeNumber(){
         return value;
