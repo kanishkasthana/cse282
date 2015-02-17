@@ -557,7 +557,7 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_4b.txt");
+            File newFile=new File("rosalind_4c.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -567,19 +567,34 @@ public class Bioinformatics {
                         
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             Bioinformatics4 newText=new Bioinformatics4();
+            int k=Integer.parseInt(inputs.get(0));
             
-            List <String> orderedStrings=Bioinformatics4.mergeSort(inputs);
+            List<String> kmers=new <String>ArrayList();
+            String text=inputs.get(1);
             
-            List <node>allnodes=newText.getOverlapGraph(orderedStrings);
+            for(int i=0;i<=text.length()-k;i++){
+                String pattern=text.substring(i,i+k);
+                kmers.add(pattern);
+            }
             
+            List <String> orderedStrings=Bioinformatics4.mergeSort(kmers);
+            
+            List<edge>alledges=newText.getDeBruijnGraph(orderedStrings,k);
+            node.sort();
+            List<node> allnodes=node.allnodes;
             for(int i=0;i<allnodes.size();i++){
                 node tempNode=allnodes.get(i);
+                if(!tempNode.getChildren().isEmpty())
+                    out.print(tempNode.getNodeString()+" -> ");
                 for(int j=0;j<tempNode.getChildren().size();j++){
-                    node tempChild=(node)tempNode.getChildren().get(j);
-                    out.print(tempNode.getNodeString());
-                    out.print(" -> ");
-                    out.println(tempChild.getNodeString());
+                    node child=tempNode.getChildren().get(j);
+                    out.print(child.getNodeString());
+                    if(j<tempNode.getChildren().size()-1)
+                        out.print(",");
                 }
+                if(!tempNode.getChildren().isEmpty())
+                out.println("");
+                
             }
             
             out.close();

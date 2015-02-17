@@ -18,10 +18,10 @@ public class node {
     int i;
     int j;
     int k;
-    List edges=new ArrayList();
-    int score=-1;
-    List parents=new ArrayList();
-    List children=new ArrayList();
+    List <edge>edges=new <edge>ArrayList();
+    int score;
+    List <node>parents=new <node>ArrayList();
+    List <node>children=new <node>ArrayList();
     node backtrackNode=null;
     String nodeString=null;
     
@@ -54,7 +54,6 @@ public class node {
     public node(String nodeString){
         this.nodeString=nodeString;
         allnodes.add(this);
-        this.setScore(0);
     }
     
     public String getNodeString(){
@@ -80,7 +79,7 @@ public class node {
     public int getK(){
         return this.k;
     }
-    public List getEdges(){
+    public List<edge> getEdges(){
         return edges;
     }
     
@@ -99,11 +98,11 @@ public class node {
         parents.add(parent);
     }
     
-    public List getChildren(){
+    public List<node> getChildren(){
         return this.children;
     }
     
-    public List getParents(){
+    public List<node> getParents(){
         return this.parents;
     }
     
@@ -162,5 +161,54 @@ public class node {
           this.setScore(maxScore);
           this.backtrackNode=maxParent;
       }     
+    }
+    
+    public static void sort(){
+        allnodes=mergeSort(allnodes);
+    }
+    
+    public static List mergeSort(List<node> list){
+        if(list.size()==1){
+            return list;
+        }
+        int firstHalfIndex=list.size()/2;
+        List <node>firstHalf=list.subList(0, firstHalfIndex);
+        List <node>secondHalf=list.subList(firstHalfIndex,list.size());
+        List <node>sortedFirstHalf=mergeSort(firstHalf);
+        List <node>sortedSecondHalf=mergeSort(secondHalf);
+        List <node>sortedList=merge(sortedFirstHalf,sortedSecondHalf);
+        
+        return sortedList;
+    }
+    
+    public static List merge(List <node>list1,List <node>list2){
+        List <node>sortedList=new <node>ArrayList();
+        int firstStringPos=0,secondStringPos=0;
+        String current1,current2;
+        
+        while(firstStringPos<list1.size() && secondStringPos<list2.size()){
+            current1=list1.get(firstStringPos).getNodeString();
+            current2=list2.get(secondStringPos).getNodeString();
+            if(current1.compareTo(current2)<0){
+                sortedList.add(list1.get(firstStringPos));
+                firstStringPos++;
+            }
+            else{
+                sortedList.add(list2.get(secondStringPos));
+                secondStringPos++;
+            }
+        }
+        
+        
+        for(int i=firstStringPos;i<list1.size();i++){
+            sortedList.add(list1.get(i));
+        }
+        
+        
+        for(int i=secondStringPos;i<list2.size();i++){
+            sortedList.add(list2.get(i));
+        }
+        
+        return sortedList;
     }
 }

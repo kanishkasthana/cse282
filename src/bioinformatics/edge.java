@@ -17,6 +17,7 @@ public class edge {
     node parent;
     node child;
     int weight;
+    String edgeString=null;
     
     public edge(String edgedata){
         
@@ -42,6 +43,17 @@ public class edge {
         this.alledges.add(this);
     }
     
+    public edge(node parent, node child, String edgeString){
+        this.parent=parent;
+        this.child=child;
+        this.edgeString=edgeString;
+        this.parent.addChild(child);
+        this.child.addParent(parent);
+        this.parent.addEdge(this);
+        this.child.addEdge(this);
+        this.alledges.add(this);    
+    }
+    
     public edge(node parent,node child,int weight){
         this.parent=parent;
         this.child=child;
@@ -52,6 +64,7 @@ public class edge {
         this.child.addEdge(this);
         this.alledges.add(this);
     }
+    
     /*
     public edge(int i1,int j1,int i2,int j2,int weight){
         for(int count=0;count<this.allnodes.length;count++){
@@ -59,6 +72,11 @@ public class edge {
         }
     }
     */
+    
+    public String getEdgeString(){
+        return edgeString;
+    }
+    
     public node getParent(){
         return parent;
     }

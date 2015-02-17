@@ -177,4 +177,30 @@ public class Bioinformatics4 extends Bioinformatics3{
         }
         return nodes;
     }
+    
+    public List<edge> getDeBruijnGraph(List<String> orderedStrings,int k){
+        List<edge> edges=new <edge>ArrayList();
+        for(int i=0;i<orderedStrings.size();i++){
+            String prefixString=orderedStrings.get(i).substring(0,k-1);
+            String sufixString=orderedStrings.get(i).substring(1);
+            node parent=null;
+            node child=null;
+            for(int j=0;j<node.allnodes.size();j++){
+                if(node.allnodes.get(j).getNodeString().equals(prefixString))
+                    parent=node.allnodes.get(j);
+                if(node.allnodes.get(j).getNodeString().equals(sufixString))
+                    child=node.allnodes.get(j);
+            }
+            if(parent==null){
+                parent=new node(prefixString);
+            }
+            if(child==null){
+                child=new node(sufixString);
+            }
+            
+            edges.add(new edge(parent,child,orderedStrings.get(i)));
+            
+        }
+        return edges;
+    }
 }
