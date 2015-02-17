@@ -557,7 +557,7 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_4c.txt");
+            File newFile=new File("rosalind_4d.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -567,16 +567,8 @@ public class Bioinformatics {
                         
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             Bioinformatics4 newText=new Bioinformatics4();
-            int k=Integer.parseInt(inputs.get(0));
-            
-            List<String> kmers=new <String>ArrayList();
-            String text=inputs.get(1);
-            
-            for(int i=0;i<=text.length()-k;i++){
-                String pattern=text.substring(i,i+k);
-                kmers.add(pattern);
-            }
-            
+            int k=inputs.get(0).length();            
+            List<String> kmers=inputs;            
             List <String> orderedStrings=Bioinformatics4.mergeSort(kmers);
             
             List<edge>alledges=newText.getDeBruijnGraph(orderedStrings,k);
@@ -593,7 +585,7 @@ public class Bioinformatics {
                         out.print(",");
                 }
                 if(!tempNode.getChildren().isEmpty())
-                out.println("");
+                    out.println("");
                 
             }
             
