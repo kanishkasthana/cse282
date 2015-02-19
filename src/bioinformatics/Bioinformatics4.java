@@ -203,4 +203,31 @@ public class Bioinformatics4 extends Bioinformatics3{
         }
         return edges;
     }
+    
+    public String numberToPattern(int index,int k){
+     if(k==1)
+         return numberToSymbol(index)+"";//Converting character to string
+     int prefixIndex=quotient(index,2);
+     int r=remainder(index,2);
+     String prefixPattern=numberToPattern(prefixIndex,k-1);
+     char symbol=numberToSymbol(r);
+     //Returning Concatenation;
+     return prefixPattern+symbol;
+    }
+    
+    public char numberToSymbol(int number){
+     char symbol;
+     switch(number){
+         case 0:
+             symbol='0';
+             break;
+         case 1:
+             symbol='1';
+             break;
+         default:
+             symbol='0';
+             break;
+     }
+     return symbol;
+    }
 }
