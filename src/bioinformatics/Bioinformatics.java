@@ -556,6 +556,24 @@ public class Bioinformatics {
         return tempCycle;
         
     }
+    
+    public static boolean isCycleStillUnexplored(List <node>cycle){
+        for(int i=0;i<cycle.size();i++){
+            if(cycle.get(i).hasUnexploredEdges())
+                return true;
+        }
+        
+       return false;
+    }
+    
+    //Returns the first Unexplored Node it finds from a cycle, null if there are no explored nodes
+    public static node getUnexploredNodeFromCycle(List <node> cycle){
+        for(int i=0;i<cycle.size();i++){
+            if(cycle.get(i).hasUnexploredEdges())
+                return cycle.get(i);
+        }
+        return null;
+    }
     /**
      * @param args the command line arguments
      */
@@ -567,7 +585,7 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("testdata.txt");
+            File newFile=new File("rosalind_4e.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -616,15 +634,12 @@ public class Bioinformatics {
                 if(allnodes[i].getIncomingEdges().size()!=allnodes[i].getOutgoingEdges().size())
                     balancedGraph=false;
             }
-            System.out.println(balancedGraph); 
+            System.out.println(balancedGraph);
             
             Random rnd=new Random();
             int randomStart=rnd.nextInt(maxnode+1);
             node currentNode=allnodes[randomStart];
             node startNode=currentNode;
-            System.out.println(randomStart);
-            //Using List as a Stack for nodes with unexplored edges
-            List<node> nodesWithUnexploredEdges= new <node> ArrayList();
             List<node> cycle=new <node>ArrayList();
             cycle.add(currentNode);
             do{
@@ -635,24 +650,16 @@ public class Bioinformatics {
                     if(currentEdge.isTraversed()==false){
                         currentEdge.traversed();
                         //If this node has more unexplored Edges we will store it for the next iteration
-                        if(i<outgoingEdges.size()-1)
-                            nodesWithUnexploredEdges.add(currentNode);
-                        else if(nodesWithUnexploredEdges.contains(currentNode))
-                            nodesWithUnexploredEdges.remove(currentNode);
                         break;
                     }
                 }
                 currentNode=currentEdge.getChild();
                 cycle.add(currentNode);
             }while(!currentNode.equals(startNode));
-            System.out.println(nodesWithUnexploredEdges.size());
-            
-            for(int i=0;i<nodesWithUnexploredEdges.size();i++)
-                System.out.println(nodesWithUnexploredEdges.get(i).getNodeNumber());
-            
-            while(!nodesWithUnexploredEdges.isEmpty()){
-                node nodeWithUnexploredEdges=nodesWithUnexploredEdges.get(0);
-                nodesWithUnexploredEdges.remove(nodeWithUnexploredEdges);
+                        
+            while(isCycleStillUnexplored(cycle))
+            {
+                node nodeWithUnexploredEdges=getUnexploredNodeFromCycle(cycle);
                 cycle=reorganizeCycle(cycle,nodeWithUnexploredEdges);
                 startNode=nodeWithUnexploredEdges;
                 currentNode=startNode;
@@ -663,11 +670,6 @@ public class Bioinformatics {
                         currentEdge=outgoingEdges.get(i);
                         if(currentEdge.isTraversed()==false){
                             currentEdge.traversed();
-                            //If this node has more unexplored Edges we will store it for the next iteration
-                            if(i<outgoingEdges.size()-1)
-                                nodesWithUnexploredEdges.add(currentNode);
-                            else if(nodesWithUnexploredEdges.contains(currentNode))
-                                nodesWithUnexploredEdges.remove(currentNode);
                             break;
                         }
                     }
@@ -675,14 +677,14 @@ public class Bioinformatics {
                     cycle.add(currentNode);
                 }while(!currentNode.equals(startNode));
             }
-            
 
             for(int i=0;i<cycle.size();i++){
-                System.out.print(cycle.get(i).getNodeNumber());
+                out.print(cycle.get(i).getNodeNumber());
                 if(i<cycle.size()-1)
-                System.out.print("->");
+                out.print("->");
             }
-            System.out.println("");          
+            
+            out.println("");          
             out.close();
                 
         }
