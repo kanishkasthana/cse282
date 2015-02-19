@@ -240,4 +240,15 @@ public class node {
         
         return false;
     }
+    
+    public boolean isBalanced(){
+        if(this.getOutgoingEdges().size()==this.getIncomingEdges().size())
+            return true;
+        else 
+            return false;
+    }
+    
+    public int balance(){
+        return getOutgoingEdges().size()-getIncomingEdges().size();
+    }
 }

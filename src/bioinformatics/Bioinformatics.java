@@ -585,7 +585,7 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_4e.txt");
+            File newFile=new File("rosalind_4f.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -626,7 +626,8 @@ public class Bioinformatics {
                     alledges.add(new edge(allnodes[parentNodeValue],allnodes[childNodeValue],0));
                 }
             }
-            
+            node start=null;
+            node end=null;
             //Checking if graph is balanced or not
             boolean balancedGraph=true;
             
@@ -634,7 +635,35 @@ public class Bioinformatics {
                 if(allnodes[i].getIncomingEdges().size()!=allnodes[i].getOutgoingEdges().size())
                     balancedGraph=false;
             }
-            System.out.println(balancedGraph);
+            if(balancedGraph==false)
+                System.out.println(balancedGraph);
+            
+            List<node> unBalancedNodes=new <node> ArrayList();
+            for(int i=0;i<allnodes.length;i++){
+                 if(!allnodes[i].isBalanced()){
+                     unBalancedNodes.add(allnodes[i]);
+                 }
+            }
+            if(unBalancedNodes.size()==2){
+                if(unBalancedNodes.get(0).balance()==1){
+                    alledges.add(new edge(unBalancedNodes.get(1),unBalancedNodes.get(0),0));
+                    start=unBalancedNodes.get(0);
+                    end=unBalancedNodes.get(1);
+                }
+                else{
+                    alledges.add(new edge(unBalancedNodes.get(0),unBalancedNodes.get(1),0));
+                    start=unBalancedNodes.get(1);
+                    end=unBalancedNodes.get(0);
+                }
+            }
+            
+            for(int i=0;i<allnodes.length;i++){
+                 if(!allnodes[i].isBalanced()){
+                     System.out.println("Unbalanced!");
+                 }
+            }
+            System.out.println(start.getNodeNumber());
+            System.out.println(end.getNodeNumber());
             
             Random rnd=new Random();
             int randomStart=rnd.nextInt(maxnode+1);
@@ -678,13 +707,15 @@ public class Bioinformatics {
                 }while(!currentNode.equals(startNode));
             }
 
-            for(int i=0;i<cycle.size();i++){
+            cycle=reorganizeCycle(cycle,start);
+                    
+            for(int i=0;i<cycle.size()-1;i++){
                 out.print(cycle.get(i).getNodeNumber());
-                if(i<cycle.size()-1)
+                if(i<cycle.size()-2)
                 out.print("->");
             }
             
-            out.println("");          
+            out.println("");         
             out.close();
                 
         }
