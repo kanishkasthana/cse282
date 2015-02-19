@@ -19,6 +19,9 @@ public class node {
     int j;
     int k;
     List <edge>edges=new <edge>ArrayList();
+    List <edge>outgoingEdges=new <edge>ArrayList();
+    List <edge>incomingEdges=new <edge>ArrayList();
+    
     int score;
     List <node>parents=new <node>ArrayList();
     List <node>children=new <node>ArrayList();
@@ -27,11 +30,13 @@ public class node {
     
     public node(int value){
         this.value=value;
+        allnodes.add(this);
     }
     
     public node(int i,int j){
         this.i=i;
         this.j=j;
+        allnodes.add(this);
     }
     
     /*
@@ -108,6 +113,22 @@ public class node {
     
     public void addEdge(edge newedge){
         this.edges.add(newedge);
+    }
+    
+    public void addOutgoingEdge(edge e){
+        this.outgoingEdges.add(e);
+    }
+    
+    public void addIncomingEdge(edge e){
+        this.incomingEdges.add(e);
+    }
+    
+    public List<edge> getOutgoingEdges(){
+        return this.outgoingEdges;
+    }
+    
+    public List<edge> getIncomingEdges(){
+        return this.incomingEdges;
     }
     
     public node getBacktrackNode(){
@@ -210,5 +231,13 @@ public class node {
         }
         
         return sortedList;
+    }
+    
+    public boolean hasUnexploredEdges(){
+        for(int i=0;i<getOutgoingEdges().size();i++)
+            if(!getOutgoingEdges().get(i).isTraversed())
+                return true;
+        
+        return false;
     }
 }

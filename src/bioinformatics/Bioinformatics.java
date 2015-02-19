@@ -546,6 +546,16 @@ public class Bioinformatics {
         }
         return count;
     }
+    
+    public static List <node> reorganizeCycle(List <node> cycle, node nodeWithUnexploredEdges){
+        
+        int pos=cycle.indexOf(nodeWithUnexploredEdges);
+        List<node> tempCycle=new <node>ArrayList();
+        tempCycle=cycle.subList(pos, cycle.size());
+        tempCycle.addAll(cycle.subList(1, pos+1));
+        return tempCycle;
+        
+    }
     /**
      * @param args the command line arguments
      */
@@ -557,7 +567,7 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_4d.txt");
+            File newFile=new File("testdata.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -567,28 +577,112 @@ public class Bioinformatics {
                         
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             Bioinformatics4 newText=new Bioinformatics4();
-            int k=inputs.get(0).length();            
-            List<String> kmers=inputs;            
-            List <String> orderedStrings=Bioinformatics4.mergeSort(kmers);
+            int maxnode=-1000000;
             
-            List<edge>alledges=newText.getDeBruijnGraph(orderedStrings,k);
-            node.sort();
-            List<node> allnodes=node.allnodes;
-            for(int i=0;i<allnodes.size();i++){
-                node tempNode=allnodes.get(i);
-                if(!tempNode.getChildren().isEmpty())
-                    out.print(tempNode.getNodeString()+" -> ");
-                for(int j=0;j<tempNode.getChildren().size();j++){
-                    node child=tempNode.getChildren().get(j);
-                    out.print(child.getNodeString());
-                    if(j<tempNode.getChildren().size()-1)
-                        out.print(",");
+            for(int i=0;i<inputs.size();i++){
+                StringTokenizer fullString=new StringTokenizer(inputs.get(i).toString()," -> ");
+                int parentNodeValue=Integer.parseInt(fullString.nextToken());
+                StringTokenizer childString=new StringTokenizer(fullString.nextToken(),",");
+                if(parentNodeValue>maxnode)
+                    maxnode=parentNodeValue;
+                while(childString.hasMoreTokens()){
+                    int childNodeValue=Integer.parseInt(childString.nextToken());
+                    if(childNodeValue>maxnode)
+                        maxnode=childNodeValue;
                 }
-                if(!tempNode.getChildren().isEmpty())
-                    out.println("");
-                
             }
             
+            node[] allnodes=new node[maxnode+1];
+            for(int i=0;i<=maxnode;i++){
+               allnodes[i]=new node(i);
+            }
+            List<edge> alledges=new <edge> ArrayList();
+            
+            for(int i=0;i<inputs.size();i++){
+                String edgedata=inputs.get(i);
+                StringTokenizer fullString=new StringTokenizer(edgedata," -> ");
+                int parentNodeValue=Integer.parseInt(fullString.nextToken());
+                StringTokenizer childString=new StringTokenizer(fullString.nextToken(),",");
+                while(childString.hasMoreTokens()){
+                    int childNodeValue=Integer.parseInt(childString.nextToken());
+                    alledges.add(new edge(allnodes[parentNodeValue],allnodes[childNodeValue],0));
+                }
+            }
+            
+            //Checking if graph is balanced or not
+            boolean balancedGraph=true;
+            
+            for(int i=0;i<allnodes.length;i++){
+                if(allnodes[i].getIncomingEdges().size()!=allnodes[i].getOutgoingEdges().size())
+                    balancedGraph=false;
+            }
+            System.out.println(balancedGraph); 
+            
+            Random rnd=new Random();
+            int randomStart=rnd.nextInt(maxnode+1);
+            node currentNode=allnodes[randomStart];
+            node startNode=currentNode;
+            System.out.println(randomStart);
+            //Using List as a Stack for nodes with unexplored edges
+            List<node> nodesWithUnexploredEdges= new <node> ArrayList();
+            List<node> cycle=new <node>ArrayList();
+            cycle.add(currentNode);
+            do{
+                List<edge> outgoingEdges=currentNode.getOutgoingEdges();
+                edge currentEdge=null;
+                for(int i=0;i<outgoingEdges.size();i++){
+                    currentEdge=outgoingEdges.get(i);
+                    if(currentEdge.isTraversed()==false){
+                        currentEdge.traversed();
+                        //If this node has more unexplored Edges we will store it for the next iteration
+                        if(i<outgoingEdges.size()-1)
+                            nodesWithUnexploredEdges.add(currentNode);
+                        else if(nodesWithUnexploredEdges.contains(currentNode))
+                            nodesWithUnexploredEdges.remove(currentNode);
+                        break;
+                    }
+                }
+                currentNode=currentEdge.getChild();
+                cycle.add(currentNode);
+            }while(!currentNode.equals(startNode));
+            System.out.println(nodesWithUnexploredEdges.size());
+            
+            for(int i=0;i<nodesWithUnexploredEdges.size();i++)
+                System.out.println(nodesWithUnexploredEdges.get(i).getNodeNumber());
+            
+            while(!nodesWithUnexploredEdges.isEmpty()){
+                node nodeWithUnexploredEdges=nodesWithUnexploredEdges.get(0);
+                nodesWithUnexploredEdges.remove(nodeWithUnexploredEdges);
+                cycle=reorganizeCycle(cycle,nodeWithUnexploredEdges);
+                startNode=nodeWithUnexploredEdges;
+                currentNode=startNode;
+                do{
+                    List<edge> outgoingEdges=currentNode.getOutgoingEdges();
+                    edge currentEdge=null;
+                    for(int i=0;i<outgoingEdges.size();i++){
+                        currentEdge=outgoingEdges.get(i);
+                        if(currentEdge.isTraversed()==false){
+                            currentEdge.traversed();
+                            //If this node has more unexplored Edges we will store it for the next iteration
+                            if(i<outgoingEdges.size()-1)
+                                nodesWithUnexploredEdges.add(currentNode);
+                            else if(nodesWithUnexploredEdges.contains(currentNode))
+                                nodesWithUnexploredEdges.remove(currentNode);
+                            break;
+                        }
+                    }
+                    currentNode=currentEdge.getChild();
+                    cycle.add(currentNode);
+                }while(!currentNode.equals(startNode));
+            }
+            
+
+            for(int i=0;i<cycle.size();i++){
+                System.out.print(cycle.get(i).getNodeNumber());
+                if(i<cycle.size()-1)
+                System.out.print("->");
+            }
+            System.out.println("");          
             out.close();
                 
         }

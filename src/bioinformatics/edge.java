@@ -12,12 +12,14 @@ import java.util.*;
  * @author kanis_000
  */
 public class edge {
-    public static List alledges=new ArrayList();
+    public static List <edge> alledges=new <edge>ArrayList();
     public static node[] allnodes;
     node parent;
     node child;
     int weight;
     String edgeString=null;
+    boolean traversed=false;
+    
     
     public edge(String edgedata){
         
@@ -42,7 +44,7 @@ public class edge {
         this.weight=weight;
         this.alledges.add(this);
     }
-    
+     
     public edge(node parent, node child, String edgeString){
         this.parent=parent;
         this.child=child;
@@ -61,7 +63,9 @@ public class edge {
         this.parent.addChild(child);
         this.child.addParent(parent);
         this.parent.addEdge(this);
+        this.parent.addOutgoingEdge(this);
         this.child.addEdge(this);
+        this.child.addIncomingEdge(this);
         this.alledges.add(this);
     }
     
@@ -87,6 +91,25 @@ public class edge {
     
     public int getWeight(){
         return weight;
+    }
+    
+    public void traversed(){
+        this.traversed=true;
+    }
+    
+    public boolean isTraversed(){
+        return this.traversed;
+    }
+    
+    public void reset(){
+        this.traversed=false;
+    }
+    
+    public static void resetAllEdges(){
+        for(int i=0;i<alledges.size();i++){
+            edge currentEdge=alledges.get(i);
+            currentEdge.reset();
+        }
     }
     
 }
