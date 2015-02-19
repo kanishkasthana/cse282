@@ -585,7 +585,7 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_4f.txt");
+            File newFile=new File("rosalind_4g.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -595,39 +595,19 @@ public class Bioinformatics {
                         
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             Bioinformatics4 newText=new Bioinformatics4();
-            int maxnode=-1000000;
+            int k=Integer.parseInt(inputs.get(0));
+            List<String> kmers=inputs.subList(1, inputs.size());            
+            List <String> orderedStrings=Bioinformatics4.mergeSort(kmers);
+            List<edge>alledges=newText.getDeBruijnGraph(orderedStrings,k);
+            node.sort();
             
-            for(int i=0;i<inputs.size();i++){
-                StringTokenizer fullString=new StringTokenizer(inputs.get(i).toString()," -> ");
-                int parentNodeValue=Integer.parseInt(fullString.nextToken());
-                StringTokenizer childString=new StringTokenizer(fullString.nextToken(),",");
-                if(parentNodeValue>maxnode)
-                    maxnode=parentNodeValue;
-                while(childString.hasMoreTokens()){
-                    int childNodeValue=Integer.parseInt(childString.nextToken());
-                    if(childNodeValue>maxnode)
-                        maxnode=childNodeValue;
-                }
-            }
-            
-            node[] allnodes=new node[maxnode+1];
-            for(int i=0;i<=maxnode;i++){
-               allnodes[i]=new node(i);
-            }
-            List<edge> alledges=new <edge> ArrayList();
-            
-            for(int i=0;i<inputs.size();i++){
-                String edgedata=inputs.get(i);
-                StringTokenizer fullString=new StringTokenizer(edgedata," -> ");
-                int parentNodeValue=Integer.parseInt(fullString.nextToken());
-                StringTokenizer childString=new StringTokenizer(fullString.nextToken(),",");
-                while(childString.hasMoreTokens()){
-                    int childNodeValue=Integer.parseInt(childString.nextToken());
-                    alledges.add(new edge(allnodes[parentNodeValue],allnodes[childNodeValue],0));
-                }
-            }
             node start=null;
             node end=null;
+            
+            node[] allnodes=new node[node.allnodes.size()];
+            for(int i=0;i<node.allnodes.size();i++){
+                allnodes[i]=node.allnodes.get(i);
+            }
             //Checking if graph is balanced or not
             boolean balancedGraph=true;
             
@@ -644,6 +624,9 @@ public class Bioinformatics {
                      unBalancedNodes.add(allnodes[i]);
                  }
             }
+            
+            System.out.println(unBalancedNodes.size());
+            
             if(unBalancedNodes.size()==2){
                 if(unBalancedNodes.get(0).balance()==1){
                     alledges.add(new edge(unBalancedNodes.get(1),unBalancedNodes.get(0),0));
@@ -662,11 +645,11 @@ public class Bioinformatics {
                      System.out.println("Unbalanced!");
                  }
             }
-            System.out.println(start.getNodeNumber());
-            System.out.println(end.getNodeNumber());
+            System.out.println(start.getNodeString());
+            System.out.println(end.getNodeString());
             
             Random rnd=new Random();
-            int randomStart=rnd.nextInt(maxnode+1);
+            int randomStart=rnd.nextInt(allnodes.length);
             node currentNode=allnodes[randomStart];
             node startNode=currentNode;
             List<node> cycle=new <node>ArrayList();
@@ -709,13 +692,13 @@ public class Bioinformatics {
 
             cycle=reorganizeCycle(cycle,start);
                     
-            for(int i=0;i<cycle.size()-1;i++){
-                out.print(cycle.get(i).getNodeNumber());
-                if(i<cycle.size()-2)
-                out.print("->");
+            StringBuilder genome=new StringBuilder(cycle.get(0).getNodeString());
+            for(int i=1;i<cycle.size()-1;i++){
+                genome.append(cycle.get(i).getNodeString().substring(k-2));
             }
             
-            out.println("");         
+            out.println(genome);     
+            
             out.close();
                 
         }

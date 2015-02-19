@@ -53,7 +53,9 @@ public class edge {
         this.child.addParent(parent);
         this.parent.addEdge(this);
         this.child.addEdge(this);
-        this.alledges.add(this);    
+        this.alledges.add(this);
+        this.parent.addOutgoingEdge(this);
+        this.child.addIncomingEdge(this);
     }
     
     public edge(node parent,node child,int weight){
