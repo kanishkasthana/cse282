@@ -585,7 +585,7 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("dataset_6207_2.txt");
+            File newFile=new File("rosalind_4j.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -595,50 +595,21 @@ public class Bioinformatics {
                         
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             Bioinformatics4 newText=new Bioinformatics4();
-            /*
-            StringTokenizer firstLine= new StringTokenizer(inputs.get(0)," ");
+            int k=inputs.get(0).length();            
+            List<String> kmers=inputs;            
+            List <String> orderedStrings=Bioinformatics4.mergeSort(kmers);
             
-            int k=Integer.parseInt(firstLine.nextToken());
-            int d=Integer.parseInt(firstLine.nextToken());
-                        
-            List <String> initialStrings=new <String> ArrayList();
-            List <String> terminalStrings=new <String> ArrayList();
-            
-            for(int i=1;i<inputs.size();i++){
-                StringTokenizer pairs=new StringTokenizer(inputs.get(i),"|");
-                initialStrings.add(pairs.nextToken());
-                terminalStrings.add(pairs.nextToken());
-            }
-            
-            List<edge>alledges=newText.getPairedDeBruijnGraph(initialStrings,terminalStrings,k);
-            */
-            
-            List<edge> alledges=new <edge> ArrayList();
-            
-            for(int i=0;i<inputs.size();i++){
-                String edgedata=inputs.get(i);
-                StringTokenizer fullString=new StringTokenizer(edgedata," -> ");
-                int parentNodeValue=Integer.parseInt(fullString.nextToken());
-                node parent=node.addToNodes(parentNodeValue);
-                StringTokenizer childString=new StringTokenizer(fullString.nextToken(),",");
-                while(childString.hasMoreTokens()){
-                    int childNodeValue=Integer.parseInt(childString.nextToken());
-                    node child=node.addToNodes(childNodeValue);
-                    alledges.add(new edge(parent,child,0));
-                }
-            }
-            
-            
-            node start=null;
-            node end=null;
+            List<edge>alledges=newText.getDeBruijnGraph(orderedStrings,k);
             
             node[] allnodes=new node[node.allnodes.size()];
             for(int i=0;i<node.allnodes.size();i++){
                 allnodes[i]=node.allnodes.get(i);
-                System.out.println(allnodes[i].getNodeNumber());
             }
             System.out.println("Edge Size:");
             System.out.println(alledges.size());
+            System.out.println("Node Size:");
+            System.out.println(allnodes.length);
+            
             //Checking if graph is balanced or not
             boolean balancedGraph=true;
             
@@ -646,12 +617,11 @@ public class Bioinformatics {
                 if(!allnodes[i].isBalanced())
                     balancedGraph=false;
             }
-            
+            System.out.print("Balanced Graph:");
             System.out.println(balancedGraph);
             
             List <List> paths= new <List> ArrayList();
-            
-            
+           
             List<node> unBalancedNodes=new <node> ArrayList();
             for(int i=0;i<allnodes.length;i++){
                  if(!allnodes[i].isBalanced()){
@@ -715,14 +685,14 @@ public class Bioinformatics {
                 paths.add(cyclicalPath);
             }
             
+            
             for(int i=0;i<paths.size();i++){
                 List <node>branch=paths.get(i);
-                for(int j=0;j<branch.size();j++){
-                    out.print(branch.get(j).getNodeNumber());
-                    if(j!=branch.size()-1)
-                        out.print("->");
+                StringBuilder contig=new StringBuilder(branch.get(0).getNodeString());
+                for(int j=1;j<branch.size();j++){
+                    contig.append(branch.get(j).getNodeString().substring(k-2));
                 }
-                out.println("");
+                out.println(contig);
             }
 
             out.close();
