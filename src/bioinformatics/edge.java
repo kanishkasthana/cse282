@@ -19,6 +19,8 @@ public class edge {
     int weight;
     String edgeString=null;
     boolean traversed=false;
+    String initialEdgeString=null;
+    String terminalEdgeString=null;
     
     
     public edge(String edgedata){
@@ -58,6 +60,58 @@ public class edge {
         this.child.addIncomingEdge(this);
     }
     
+    public edge(node parent, node child, String initialEdgeString,String terminalEdgeString){
+        
+        this.parent=parent;
+        this.child=child;
+        this.initialEdgeString=initialEdgeString;
+        this.terminalEdgeString=terminalEdgeString;
+        this.parent.addChild(child);
+        this.child.addParent(parent);
+        this.parent.addEdge(this);
+        this.child.addEdge(this);
+        this.alledges.add(this);
+        this.parent.addOutgoingEdge(this);
+        this.child.addIncomingEdge(this);
+        
+    }
+    
+    public edge(String initialEdgeString,String terminalEdgeString){
+        
+        int k=initialEdgeString.length();
+        String initialPrefixString=initialEdgeString.substring(0,k-1);
+        String terminalPrefixString=terminalEdgeString.substring(0,k-1);
+        String initialSufixString=initialEdgeString.substring(1);
+        String terminalSufixString=terminalEdgeString.substring(1);
+        
+        for(int i=0;i<node.allnodes.size();i++)
+        {
+          if(node.allnodes.get(i).isSame(initialPrefixString, terminalPrefixString)){
+              this.parent=node.allnodes.get(i);
+              break;
+          }  
+        }
+        
+        for(int i=0;i<node.allnodes.size();i++)
+        {
+          if(node.allnodes.get(i).isSame(initialSufixString, terminalSufixString)){
+              this.child=node.allnodes.get(i);
+              break;
+          }  
+        }
+        
+        this.initialEdgeString=initialEdgeString;
+        this.terminalEdgeString=terminalEdgeString;
+        this.parent.addChild(child);
+        this.child.addParent(parent);
+        this.parent.addEdge(this);
+        this.child.addEdge(this);
+        this.alledges.add(this);
+        this.parent.addOutgoingEdge(this);
+        this.child.addIncomingEdge(this);
+    
+    }
+    
     public edge(node parent,node child,int weight){
         this.parent=parent;
         this.child=child;
@@ -78,6 +132,14 @@ public class edge {
         }
     }
     */
+    
+    public String getInitialEdgeString(){
+        return initialEdgeString;
+    }
+    
+    public String getTerminalEdgeString(){
+        return terminalEdgeString;
+    }
     
     public String getEdgeString(){
         return edgeString;

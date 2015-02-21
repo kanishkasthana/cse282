@@ -585,7 +585,7 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_4h.txt");
+            File newFile=new File("rosalind_4i.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -595,16 +595,21 @@ public class Bioinformatics {
                         
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             Bioinformatics4 newText=new Bioinformatics4();
-            int k=Integer.parseInt(inputs.get(0));
-            List<String> kmers=new <String> ArrayList();
-            int last=newText.power(2, k);
-            for(int i=0;i<last;i++){
-                kmers.add(newText.numberToPattern(i, k));
+            StringTokenizer firstLine= new StringTokenizer(inputs.get(0)," ");
+            
+            int k=Integer.parseInt(firstLine.nextToken());
+            int d=Integer.parseInt(firstLine.nextToken());
+                        
+            List <String> initialStrings=new <String> ArrayList();
+            List <String> terminalStrings=new <String> ArrayList();
+            
+            for(int i=1;i<inputs.size();i++){
+                StringTokenizer pairs=new StringTokenizer(inputs.get(i),"|");
+                initialStrings.add(pairs.nextToken());
+                terminalStrings.add(pairs.nextToken());
             }
             
-            List <String> orderedStrings=Bioinformatics4.mergeSort(kmers);
-            List<edge>alledges=newText.getDeBruijnGraph(orderedStrings,k);
-            node.sort();
+            List<edge>alledges=newText.getPairedDeBruijnGraph(initialStrings,terminalStrings,k);
             
             node start=null;
             node end=null;
@@ -617,11 +622,11 @@ public class Bioinformatics {
             boolean balancedGraph=true;
             
             for(int i=0;i<allnodes.length;i++){
-                if(allnodes[i].getIncomingEdges().size()!=allnodes[i].getOutgoingEdges().size())
+                if(!allnodes[i].isBalanced())
                     balancedGraph=false;
             }
-            if(balancedGraph==false)
-                System.out.println(balancedGraph);
+            
+            System.out.println(balancedGraph);
             
             List<node> unBalancedNodes=new <node> ArrayList();
             for(int i=0;i<allnodes.length;i++){
@@ -650,8 +655,11 @@ public class Bioinformatics {
                      System.out.println("Unbalanced!");
                  }
             }
-            System.out.println(start.getNodeString());
-            System.out.println(end.getNodeString());
+            
+            System.out.println(node.allnodes.size());
+            System.out.println(alledges.size());
+            start.printPair();
+            end.printPair();
             
             Random rnd=new Random();
             int randomStart=rnd.nextInt(allnodes.length);
@@ -697,12 +705,16 @@ public class Bioinformatics {
 
             cycle=reorganizeCycle(cycle,start);
                     
-            StringBuilder genome=new StringBuilder(cycle.get(0).getNodeString());
-            for(int i=1;i<cycle.size()-k;i++){
-                genome.append(cycle.get(i).getNodeString().substring(k-2));
+            StringBuilder prefixString=new StringBuilder(cycle.get(0).getInitialString());
+            StringBuilder sufixString= new StringBuilder(cycle.get(0).getTerminalString());
+            for(int i=1;i<cycle.size()-1;i++){
+                prefixString.append(cycle.get(i).getInitialString().substring(k-2));
+                sufixString.append(cycle.get(i).getTerminalString().substring(k-2));
             }
             
-            out.println(genome);     
+            System.out.println(prefixString);
+            System.out.println(sufixString);
+            out.println(prefixString+sufixString.substring(sufixString.length()-k-d));
             
             out.close();
                 

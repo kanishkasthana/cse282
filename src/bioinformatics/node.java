@@ -27,6 +27,8 @@ public class node {
     List <node>children=new <node>ArrayList();
     node backtrackNode=null;
     String nodeString=null;
+    String initial=null;
+    String terminal=null;
     
     public node(int value){
         this.value=value;
@@ -59,6 +61,33 @@ public class node {
     public node(String nodeString){
         this.nodeString=nodeString;
         allnodes.add(this);
+    }
+    
+    public node(String initialString,String terminalString){
+        this.initial=initialString;
+        this.terminal=terminalString;
+        allnodes.add(this);
+    }
+    
+    public static void addPairedToNodes(String initialString,String terminalString){
+        boolean presentInGraph=false;
+        for(int i=0;i<node.allnodes.size();i++){
+            if(node.allnodes.get(i).isSame(initialString, terminalString)){
+                presentInGraph=true;
+                break;
+            }
+        }
+        if(!presentInGraph){
+            node newNode=new node(initialString,terminalString);
+        }
+    }
+    
+    public String getInitialString(){
+        return this.initial;
+    }
+    
+    public String getTerminalString(){
+        return this.terminal;
     }
     
     public String getNodeString(){
@@ -250,5 +279,15 @@ public class node {
     
     public int balance(){
         return getOutgoingEdges().size()-getIncomingEdges().size();
+    }
+    
+    public boolean isSame(String initial,String terminal){
+        if(this.initial.equals(initial) && this.terminal.equals(terminal))
+            return true;
+        else return false;
+    }
+    
+    public void printPair(){
+        System.out.println(this.initial+"|"+this.terminal);
     }
 }

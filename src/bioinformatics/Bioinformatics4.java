@@ -204,6 +204,30 @@ public class Bioinformatics4 extends Bioinformatics3{
         return edges;
     }
     
+    public List<edge> getPairedDeBruijnGraph(List <String>initialStrings,List <String> terminalStrings,int k){
+        
+        List<edge> edges=new <edge>ArrayList();
+        
+        //Creating all the nodes first
+        for(int i=0;i<initialStrings.size();i++){
+            String initialPrefixString=initialStrings.get(i).substring(0,k-1);
+            String initialSufixString=initialStrings.get(i).substring(1);
+            String terminalPrefixString=terminalStrings.get(i).substring(0,k-1);
+            String terminalSufixString=terminalStrings.get(i).substring(1);
+                      
+            node.addPairedToNodes(initialPrefixString, terminalPrefixString);
+            node.addPairedToNodes(initialSufixString, terminalSufixString);
+        }
+        
+        for(int i=0;i<initialStrings.size();i++)
+        {
+            edges.add(new edge(initialStrings.get(i),terminalStrings.get(i)));
+        }
+        
+        return edges;
+        
+    }
+    
     public String numberToPattern(int index,int k){
      if(k==1)
          return numberToSymbol(index)+"";//Converting character to string
