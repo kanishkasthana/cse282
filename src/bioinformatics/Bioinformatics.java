@@ -585,7 +585,7 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_4i.txt");
+            File newFile=new File("dataset_6207_2.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -595,6 +595,7 @@ public class Bioinformatics {
                         
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             Bioinformatics4 newText=new Bioinformatics4();
+            /*
             StringTokenizer firstLine= new StringTokenizer(inputs.get(0)," ");
             
             int k=Integer.parseInt(firstLine.nextToken());
@@ -610,6 +611,23 @@ public class Bioinformatics {
             }
             
             List<edge>alledges=newText.getPairedDeBruijnGraph(initialStrings,terminalStrings,k);
+            */
+            
+            List<edge> alledges=new <edge> ArrayList();
+            
+            for(int i=0;i<inputs.size();i++){
+                String edgedata=inputs.get(i);
+                StringTokenizer fullString=new StringTokenizer(edgedata," -> ");
+                int parentNodeValue=Integer.parseInt(fullString.nextToken());
+                node parent=node.addToNodes(parentNodeValue);
+                StringTokenizer childString=new StringTokenizer(fullString.nextToken(),",");
+                while(childString.hasMoreTokens()){
+                    int childNodeValue=Integer.parseInt(childString.nextToken());
+                    node child=node.addToNodes(childNodeValue);
+                    alledges.add(new edge(parent,child,0));
+                }
+            }
+            
             
             node start=null;
             node end=null;
@@ -617,7 +635,10 @@ public class Bioinformatics {
             node[] allnodes=new node[node.allnodes.size()];
             for(int i=0;i<node.allnodes.size();i++){
                 allnodes[i]=node.allnodes.get(i);
+                System.out.println(allnodes[i].getNodeNumber());
             }
+            System.out.println("Edge Size:");
+            System.out.println(alledges.size());
             //Checking if graph is balanced or not
             boolean balancedGraph=true;
             
@@ -628,6 +649,9 @@ public class Bioinformatics {
             
             System.out.println(balancedGraph);
             
+            List <List> paths= new <List> ArrayList();
+            
+            
             List<node> unBalancedNodes=new <node> ArrayList();
             for(int i=0;i<allnodes.length;i++){
                  if(!allnodes[i].isBalanced()){
@@ -637,85 +661,70 @@ public class Bioinformatics {
             
             System.out.println(unBalancedNodes.size());
             
-            if(unBalancedNodes.size()==2){
-                if(unBalancedNodes.get(0).balance()==1){
-                    alledges.add(new edge(unBalancedNodes.get(1),unBalancedNodes.get(0),0));
-                    start=unBalancedNodes.get(0);
-                    end=unBalancedNodes.get(1);
-                }
-                else{
-                    alledges.add(new edge(unBalancedNodes.get(0),unBalancedNodes.get(1),0));
-                    start=unBalancedNodes.get(1);
-                    end=unBalancedNodes.get(0);
-                }
-            }
-            
             for(int i=0;i<allnodes.length;i++){
-                 if(!allnodes[i].isBalanced()){
-                     System.out.println("Unbalanced!");
-                 }
-            }
-            
-            System.out.println(node.allnodes.size());
-            System.out.println(alledges.size());
-            start.printPair();
-            end.printPair();
-            
-            Random rnd=new Random();
-            int randomStart=rnd.nextInt(allnodes.length);
-            node currentNode=allnodes[randomStart];
-            node startNode=currentNode;
-            List<node> cycle=new <node>ArrayList();
-            cycle.add(currentNode);
-            do{
-                List<edge> outgoingEdges=currentNode.getOutgoingEdges();
-                edge currentEdge=null;
-                for(int i=0;i<outgoingEdges.size();i++){
-                    currentEdge=outgoingEdges.get(i);
-                    if(currentEdge.isTraversed()==false){
-                        currentEdge.traversed();
-                        //If this node has more unexplored Edges we will store it for the next iteration
-                        break;
-                    }
-                }
-                currentNode=currentEdge.getChild();
-                cycle.add(currentNode);
-            }while(!currentNode.equals(startNode));
-                        
-            while(isCycleStillUnexplored(cycle))
-            {
-                node nodeWithUnexploredEdges=getUnexploredNodeFromCycle(cycle);
-                cycle=reorganizeCycle(cycle,nodeWithUnexploredEdges);
-                startNode=nodeWithUnexploredEdges;
-                currentNode=startNode;
-                do{
-                    List<edge> outgoingEdges=currentNode.getOutgoingEdges();
-                    edge currentEdge=null;
-                    for(int i=0;i<outgoingEdges.size();i++){
-                        currentEdge=outgoingEdges.get(i);
-                        if(currentEdge.isTraversed()==false){
-                            currentEdge.traversed();
-                            break;
+                node v=allnodes[i];
+                if(!(v.getIncomingEdges().size()==v.getOutgoingEdges().size() && v.getIncomingEdges().size()==1))
+                    if(v.getOutgoingEdges().size()>0){
+                        for(int j=0;j<v.getChildren().size();j++){
+                            List <node>nonBranchingPath=new <node>ArrayList();
+                            nonBranchingPath.add(v);
+                            nonBranchingPath.add(v.getChildren().get(j));
+                            node w=v.getChildren().get(j);
+                            while((w.getIncomingEdges().size()==w.getOutgoingEdges().size() && w.getIncomingEdges().size()==1)){
+                                node u=w.getChildren().get(0);
+                                nonBranchingPath.add(u);
+                                w=u;
+                            }
+                            paths.add(nonBranchingPath);
                         }
                     }
-                    currentNode=currentEdge.getChild();
-                    cycle.add(currentNode);
-                }while(!currentNode.equals(startNode));
+                    
+            }
+            
+            List <node> presentInACycle=new <node> ArrayList();
+            
+            for(int i=0;i<allnodes.length;i++){
+                node v=allnodes[i];
+                if((v.getIncomingEdges().size()==v.getOutgoingEdges().size() && v.getIncomingEdges().size()==1)){
+                    node w=v.getChildren().get(0);
+                    while(w.getIncomingEdges().size()==w.getOutgoingEdges().size() && w.getIncomingEdges().size()==1){
+                        if(w.equals(v)){
+                            presentInACycle.add(v);
+                            break;
+                        }
+                        w=w.getChildren().get(0);
+                    }
+                }
+                
+            }
+            
+            while(!presentInACycle.isEmpty()){
+                System.out.println("Loop has been activated!");
+                node v=presentInACycle.get(0);
+                node w=v.getChildren().get(0);
+                List <node> cyclicalPath=new <node> ArrayList();
+                cyclicalPath.add(v);
+                cyclicalPath.add(w);
+                presentInACycle.remove(v);
+                presentInACycle.remove(w);
+                while(!w.equals(v)){
+                   w=w.getChildren().get(0);
+                   cyclicalPath.add(w);
+                   presentInACycle.remove(w);
+                }
+                paths.add(cyclicalPath);
+            }
+            
+            for(int i=0;i<paths.size();i++){
+                List <node>branch=paths.get(i);
+                for(int j=0;j<branch.size();j++){
+                    out.print(branch.get(j).getNodeNumber());
+                    if(j!=branch.size()-1)
+                        out.print("->");
+                }
+                out.println("");
             }
 
-            cycle=reorganizeCycle(cycle,start);
-                    
-            StringBuilder prefixString=new StringBuilder(cycle.get(0).getInitialString());
-            StringBuilder sufixString= new StringBuilder(cycle.get(0).getTerminalString());
-            for(int i=1;i<cycle.size()-1;i++){
-                prefixString.append(cycle.get(i).getInitialString().substring(k-2));
-                sufixString.append(cycle.get(i).getTerminalString().substring(k-2));
-            }
-            
-            System.out.println(prefixString);
-            System.out.println(sufixString);
-            out.println(prefixString+sufixString.substring(sufixString.length()-k-d));
-            
             out.close();
                 
         }

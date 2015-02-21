@@ -82,6 +82,22 @@ public class node {
         }
     }
     
+    public static node addToNodes(int nodenumber){
+        boolean presentInGraph=false;
+        for(int i=0;i<node.allnodes.size();i++){
+            if(node.allnodes.get(i).getNodeNumber()==nodenumber){
+                presentInGraph=true;
+                return node.allnodes.get(i);
+            }
+        }
+        
+        if(!presentInGraph){
+            node newNode=new node(nodenumber);
+            return newNode;
+        }
+        return null;
+    }
+    
     public String getInitialString(){
         return this.initial;
     }
