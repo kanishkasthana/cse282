@@ -8,6 +8,7 @@ package bioinformatics;
 import static bioinformatics.Bioinformatics3.getPos;
 import java.io.*;
 import java.util.*;
+import java.lang.Math;
 
 /**
  *
@@ -585,7 +586,7 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_4j.txt");
+            File newFile=new File("rosalind_6a.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -594,107 +595,30 @@ public class Bioinformatics {
             }
                         
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
-            Bioinformatics4 newText=new Bioinformatics4();
-            int k=inputs.get(0).length();            
-            List<String> kmers=inputs;            
-            List <String> orderedStrings=Bioinformatics4.mergeSort(kmers);
+            Bioinformatics5 newText=new Bioinformatics5();
+            String reversalString=inputs.get(0).substring(1,inputs.get(0).length()-1);
+            StringTokenizer elements=new StringTokenizer(reversalString);
+            int[] permutations=new int[elements.countTokens()];
+            int count=0;
             
-            List<edge>alledges=newText.getDeBruijnGraph(orderedStrings,k);
-            
-            node[] allnodes=new node[node.allnodes.size()];
-            for(int i=0;i<node.allnodes.size();i++){
-                allnodes[i]=node.allnodes.get(i);
-            }
-            System.out.println("Edge Size:");
-            System.out.println(alledges.size());
-            System.out.println("Node Size:");
-            System.out.println(allnodes.length);
-            
-            //Checking if graph is balanced or not
-            boolean balancedGraph=true;
-            
-            for(int i=0;i<allnodes.length;i++){
-                if(!allnodes[i].isBalanced())
-                    balancedGraph=false;
-            }
-            System.out.print("Balanced Graph:");
-            System.out.println(balancedGraph);
-            
-            List <List> paths= new <List> ArrayList();
-           
-            List<node> unBalancedNodes=new <node> ArrayList();
-            for(int i=0;i<allnodes.length;i++){
-                 if(!allnodes[i].isBalanced()){
-                     unBalancedNodes.add(allnodes[i]);
-                 }
+            while(elements.hasMoreTokens()){
+                permutations[count++]=Integer.parseInt(elements.nextToken());
             }
             
-            System.out.println(unBalancedNodes.size());
-            
-            for(int i=0;i<allnodes.length;i++){
-                node v=allnodes[i];
-                if(!(v.getIncomingEdges().size()==v.getOutgoingEdges().size() && v.getIncomingEdges().size()==1))
-                    if(v.getOutgoingEdges().size()>0){
-                        for(int j=0;j<v.getChildren().size();j++){
-                            List <node>nonBranchingPath=new <node>ArrayList();
-                            nonBranchingPath.add(v);
-                            nonBranchingPath.add(v.getChildren().get(j));
-                            node w=v.getChildren().get(j);
-                            while((w.getIncomingEdges().size()==w.getOutgoingEdges().size() && w.getIncomingEdges().size()==1)){
-                                node u=w.getChildren().get(0);
-                                nonBranchingPath.add(u);
-                                w=u;
-                            }
-                            paths.add(nonBranchingPath);
-                        }
-                    }
-                    
+            for(int i=0;i<permutations.length;i++){
+                System.out.println((permutations[i]));
             }
             
-            List <node> presentInACycle=new <node> ArrayList();
+            permutations=newText.greedySorting(permutations,out);
             
-            for(int i=0;i<allnodes.length;i++){
-                node v=allnodes[i];
-                if((v.getIncomingEdges().size()==v.getOutgoingEdges().size() && v.getIncomingEdges().size()==1)){
-                    node w=v.getChildren().get(0);
-                    while(w.getIncomingEdges().size()==w.getOutgoingEdges().size() && w.getIncomingEdges().size()==1){
-                        if(w.equals(v)){
-                            presentInACycle.add(v);
-                            break;
-                        }
-                        w=w.getChildren().get(0);
-                    }
-                }
-                
+            for(int i=0;i<permutations.length;i++){
+                System.out.print((permutations[i]));
+                System.out.print(" ");
             }
+            System.out.println("");
+            System.out.println(reversalString);
+      
             
-            while(!presentInACycle.isEmpty()){
-                System.out.println("Loop has been activated!");
-                node v=presentInACycle.get(0);
-                node w=v.getChildren().get(0);
-                List <node> cyclicalPath=new <node> ArrayList();
-                cyclicalPath.add(v);
-                cyclicalPath.add(w);
-                presentInACycle.remove(v);
-                presentInACycle.remove(w);
-                while(!w.equals(v)){
-                   w=w.getChildren().get(0);
-                   cyclicalPath.add(w);
-                   presentInACycle.remove(w);
-                }
-                paths.add(cyclicalPath);
-            }
-            
-            
-            for(int i=0;i<paths.size();i++){
-                List <node>branch=paths.get(i);
-                StringBuilder contig=new StringBuilder(branch.get(0).getNodeString());
-                for(int j=1;j<branch.size();j++){
-                    contig.append(branch.get(j).getNodeString().substring(k-2));
-                }
-                out.println(contig);
-            }
-
             out.close();
                 
         }
