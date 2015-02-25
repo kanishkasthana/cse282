@@ -586,7 +586,7 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_6a.txt");
+            File newFile=new File("rosalind_6b.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -604,12 +604,10 @@ public class Bioinformatics {
             while(elements.hasMoreTokens()){
                 permutations[count++]=Integer.parseInt(elements.nextToken());
             }
-            
-            for(int i=0;i<permutations.length;i++){
-                System.out.println((permutations[i]));
-            }
-            
-            permutations=newText.greedySorting(permutations,out);
+                     
+            int breakPoints=newText.findBreakPoints(permutations);
+            System.out.println("BreakPoints:");
+            out.println(breakPoints);
             
             for(int i=0;i<permutations.length;i++){
                 System.out.print((permutations[i]));

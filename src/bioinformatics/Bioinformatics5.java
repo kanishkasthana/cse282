@@ -76,5 +76,28 @@ public class Bioinformatics5 extends Bioinformatics4{
         out.println(")");
     }
     
+    public int findBreakPoints(int[] permutations){
+        int breakPoints=0;
+        int adjacencies=0;
+        for(int i=0;i<permutations.length;i++){
+            if(i==0){
+                int difference=permutations[i]-0;
+                if(difference!=1)
+                    breakPoints++;
+            }
+            else if(i==permutations.length-1){
+                int difference=permutations.length+1-permutations[i];
+                if(difference!=1)
+                    breakPoints++;
+            }
+            else{
+                int difference=permutations[i+1]-permutations[i];
+                if(difference!=1)
+                    breakPoints++;
+            }
+        }
+        return breakPoints;
+    }
+    
 
 }
