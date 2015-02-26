@@ -588,7 +588,7 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("testdata.txt");
+            File newFile=new File("rosalind_6c.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -661,8 +661,10 @@ public class Bioinformatics {
             List <List> listofCycles=new <List> ArrayList();
             
             int numCycles=0;
+            
             for(int i=0;i<nodes.length;i++){
                 if(notCountedInCycles.contains(nodes[i])){
+                numCycles++;
                 System.out.println("Start:");
                 node startNode=nodes[i];
                 System.out.println(startNode.getNodeNumber());
@@ -693,7 +695,7 @@ public class Bioinformatics {
                             }
                             currentEdge.traversed();
                             notCountedInCycles.remove(currentNode);
-                            System.out.println(currentNode.getNodeNumber());
+                           // System.out.println(currentNode.getNodeNumber());
                         }
                     }
                     
@@ -701,11 +703,11 @@ public class Bioinformatics {
                    
                 }
                 
-                numCycles++;
+                
               }
            }
             System.out.println("Number of Cycles:");
-            System.out.println(numCycles);
+            out.println(count-numCycles);
             out.close();
                 
         }
