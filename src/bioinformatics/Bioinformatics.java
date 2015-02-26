@@ -24,6 +24,8 @@ public class Bioinformatics {
     private List frequentPatterns=null;
     int[] frequencyArray=null;
     private String reverseText=null;
+    public static int red=1;
+    public static int blue=2;
     
     public Bioinformatics(String text){
         this.text=text;
@@ -586,7 +588,7 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_6b.txt");
+            File newFile=new File("testdata.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -596,27 +598,114 @@ public class Bioinformatics {
                         
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             Bioinformatics5 newText=new Bioinformatics5();
-            String reversalString=inputs.get(0).substring(1,inputs.get(0).length()-1);
-            StringTokenizer elements=new StringTokenizer(reversalString);
-            int[] permutations=new int[elements.countTokens()];
+            String data=inputs.get(0).substring(1,inputs.get(0).length()-1);
+            StringTokenizer chromosomes=new StringTokenizer(data,")(");
+            List <String>chromosomeStrings=new <String> ArrayList();
             int count=0;
-            
-            while(elements.hasMoreTokens()){
-                permutations[count++]=Integer.parseInt(elements.nextToken());
+            while(chromosomes.hasMoreTokens()){
+                String currentChromosome=chromosomes.nextToken();
+                chromosomeStrings.add(currentChromosome);
+                StringTokenizer elements=new StringTokenizer(currentChromosome);
+                count+=elements.countTokens();
             }
-                     
-            int breakPoints=newText.findBreakPoints(permutations);
-            System.out.println("BreakPoints:");
-            out.println(breakPoints);
             
-            for(int i=0;i<permutations.length;i++){
-                System.out.print((permutations[i]));
-                System.out.print(" ");
+            //System.out.println(count);
+            
+            node[] nodes=new node[count*2];
+            for(int i=0;i<nodes.length;i++){
+                nodes[i]=new node(i+1);
+            }
+            
+            List <edge> alledgesRed=newText.coloredEdges(chromosomeStrings, nodes, red);
+            
+            for(int i=0;i<alledgesRed.size();i++){
+                edge currentEdge=alledgesRed.get(i);
+                System.out.print("(");
+                System.out.print(currentEdge.getParent().getNodeNumber());
+                System.out.print(", ");
+                System.out.print(currentEdge.getChild().getNodeNumber());
+                System.out.print(")");
+                if(i!=alledgesRed.size()-1)
+                    System.out.print(", ");
+            }
+            
+            System.out.println("");
+            data=inputs.get(1).substring(1,inputs.get(1).length()-1);
+            chromosomes=new StringTokenizer(data,")(");
+            chromosomeStrings=new <String> ArrayList();
+            while(chromosomes.hasMoreTokens()){
+                String currentChromosome=chromosomes.nextToken();
+                chromosomeStrings.add(currentChromosome);
+            }
+            
+            List <edge> alledgesBlue=newText.coloredEdges(chromosomeStrings, nodes, blue);
+            
+            for(int i=0;i<alledgesBlue.size();i++){
+                edge currentEdge=alledgesBlue.get(i);
+                System.out.print("(");
+                System.out.print(currentEdge.getParent().getNodeNumber());
+                System.out.print(", ");
+                System.out.print(currentEdge.getChild().getNodeNumber());
+                System.out.print(")");
+                if(i!=alledgesBlue.size()-1)
+                    System.out.print(", ");
             }
             System.out.println("");
-            System.out.println(reversalString);
-      
             
+            List <node> notCountedInCycles= new <node>ArrayList();
+            
+            for(int i=0;i<nodes.length;i++){
+             notCountedInCycles.add(nodes[i]);
+            }
+            
+            List <List> listofCycles=new <List> ArrayList();
+            
+            int numCycles=0;
+            for(int i=0;i<nodes.length;i++){
+                if(notCountedInCycles.contains(nodes[i])){
+                System.out.println("Start:");
+                node startNode=nodes[i];
+                System.out.println(startNode.getNodeNumber());
+                notCountedInCycles.remove(startNode);
+                node currentNode;
+                edge firstEdge=startNode.getEdges().get(0);
+                firstEdge.traversed();
+                if(firstEdge.getChild().equals(startNode)){
+                    currentNode=firstEdge.getParent();
+                }
+                else{
+                    currentNode=firstEdge.getChild();
+                }
+                System.out.println(currentNode.getNodeNumber());
+                notCountedInCycles.remove(currentNode);
+                System.out.println("Reached Here:");
+                while(!currentNode.equals(startNode)){    
+                    
+                    for(int j=0;j<currentNode.getEdges().size();j++){
+                        edge currentEdge=currentNode.getEdges().get(j);
+                        
+                        if(!currentEdge.isTraversed()){
+                            if(currentEdge.getChild().equals(currentNode)){
+                                currentNode=currentEdge.getParent();
+                            }
+                            else{
+                                currentNode=currentEdge.getChild();
+                            }
+                            currentEdge.traversed();
+                            notCountedInCycles.remove(currentNode);
+                            System.out.println(currentNode.getNodeNumber());
+                        }
+                    }
+                    
+                    
+                   
+                }
+                
+                numCycles++;
+              }
+           }
+            System.out.println("Number of Cycles:");
+            System.out.println(numCycles);
             out.close();
                 
         }

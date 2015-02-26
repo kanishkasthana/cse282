@@ -76,9 +76,23 @@ public class Bioinformatics5 extends Bioinformatics4{
         out.println(")");
     }
     
+    public void printPermutation(int[] permutations){
+        System.out.print("(");
+        for(int i=0;i<permutations.length;i++){
+            if(permutations[i]>0)
+                System.out.print("+");
+            
+            System.out.print(permutations[i]);
+            
+            if(i!=permutations.length-1)
+                System.out.print(" ");
+        }
+        System.out.println(")");
+    }
+
+    
     public int findBreakPoints(int[] permutations){
         int breakPoints=0;
-        int adjacencies=0;
         for(int i=0;i<permutations.length;i++){
             if(i==0){
                 int difference=permutations[i]-0;
@@ -97,6 +111,47 @@ public class Bioinformatics5 extends Bioinformatics4{
             }
         }
         return breakPoints;
+    }
+    
+    public List<node> chromosomeToCycle(int[] chromosomeValues,node[] nodes){
+     List <node> nodeOrder=new <node> ArrayList();
+     for(int j=0;j<chromosomeValues.length;j++){
+         int i=chromosomeValues[j];
+         if(i>0){
+             nodeOrder.add(nodes[2*i-2]);
+             nodeOrder.add(nodes[2*i-1]);
+         }
+         else{
+             nodeOrder.add(nodes[-2*i-1]);
+             nodeOrder.add(nodes[-2*i-2]);
+         }
+     }
+        return nodeOrder;
+    }
+    
+    public List<edge> coloredEdges(List <String> chromosomeStrings,node[] nodes,int color){
+        List <edge>alledges=new <edge> ArrayList();
+        for(int i=0;i<chromosomeStrings.size();i++){
+            String currentChromosome=chromosomeStrings.get(i);
+            StringTokenizer elements=new StringTokenizer(currentChromosome);
+            int count=0;
+            int[] chromosomeValues=new int[elements.countTokens()];
+            
+            while(elements.hasMoreTokens()){
+                chromosomeValues[count++]=Integer.parseInt(elements.nextToken());
+            }
+            List <node> nodeOrder=chromosomeToCycle(chromosomeValues,nodes);
+            node firstElement=nodeOrder.get(0);
+            nodeOrder.add(firstElement);
+            
+            for(int j=0;j<chromosomeValues.length;j++){
+                edge newEdge=new edge(nodeOrder.get(2*(j+1)-1),nodeOrder.get(2*(j+1)),color);
+                alledges.add(newEdge);
+            }
+            
+        }
+        
+        return alledges;
     }
     
 
