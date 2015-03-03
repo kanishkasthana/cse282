@@ -393,7 +393,7 @@ public class Bioinformatics {
     public void reverseText(){
      reverseText=reverseComplement(text);
     }
-    public String reverseComplement(String forwardStrand){
+    public static String reverseComplement(String forwardStrand){
         StringBuilder reverseStrand=new StringBuilder();
         char base;
         for(int i=forwardStrand.length()-1;i>=0;i--){
@@ -588,7 +588,7 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_6c.txt");
+            File newFile=new File("rosalind_6d.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -598,116 +598,34 @@ public class Bioinformatics {
                         
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             Bioinformatics5 newText=new Bioinformatics5();
-            String data=inputs.get(0).substring(1,inputs.get(0).length()-1);
-            StringTokenizer chromosomes=new StringTokenizer(data,")(");
-            List <String>chromosomeStrings=new <String> ArrayList();
-            int count=0;
-            while(chromosomes.hasMoreTokens()){
-                String currentChromosome=chromosomes.nextToken();
-                chromosomeStrings.add(currentChromosome);
-                StringTokenizer elements=new StringTokenizer(currentChromosome);
-                count+=elements.countTokens();
-            }
+            int k=Integer.parseInt(inputs.get(0));
+            String firstGenome=inputs.get(1);
+            String secondGenome=inputs.get(2);
             
-            //System.out.println(count);
-            
-            node[] nodes=new node[count*2];
-            for(int i=0;i<nodes.length;i++){
-                nodes[i]=new node(i+1);
-            }
-            
-            List <edge> alledgesRed=newText.coloredEdges(chromosomeStrings, nodes, red);
-            
-            for(int i=0;i<alledgesRed.size();i++){
-                edge currentEdge=alledgesRed.get(i);
-                System.out.print("(");
-                System.out.print(currentEdge.getParent().getNodeNumber());
-                System.out.print(", ");
-                System.out.print(currentEdge.getChild().getNodeNumber());
-                System.out.print(")");
-                if(i!=alledgesRed.size()-1)
-                    System.out.print(", ");
-            }
-            
-            System.out.println("");
-            data=inputs.get(1).substring(1,inputs.get(1).length()-1);
-            chromosomes=new StringTokenizer(data,")(");
-            chromosomeStrings=new <String> ArrayList();
-            while(chromosomes.hasMoreTokens()){
-                String currentChromosome=chromosomes.nextToken();
-                chromosomeStrings.add(currentChromosome);
-            }
-            
-            List <edge> alledgesBlue=newText.coloredEdges(chromosomeStrings, nodes, blue);
-            
-            for(int i=0;i<alledgesBlue.size();i++){
-                edge currentEdge=alledgesBlue.get(i);
-                System.out.print("(");
-                System.out.print(currentEdge.getParent().getNodeNumber());
-                System.out.print(", ");
-                System.out.print(currentEdge.getChild().getNodeNumber());
-                System.out.print(")");
-                if(i!=alledgesBlue.size()-1)
-                    System.out.print(", ");
-            }
-            System.out.println("");
-            
-            List <node> notCountedInCycles= new <node>ArrayList();
-            
-            for(int i=0;i<nodes.length;i++){
-             notCountedInCycles.add(nodes[i]);
-            }
-            
-            List <List> listofCycles=new <List> ArrayList();
-            
-            int numCycles=0;
-            
-            for(int i=0;i<nodes.length;i++){
-                if(notCountedInCycles.contains(nodes[i])){
-                numCycles++;
-                System.out.println("Start:");
-                node startNode=nodes[i];
-                System.out.println(startNode.getNodeNumber());
-                notCountedInCycles.remove(startNode);
-                node currentNode;
-                edge firstEdge=startNode.getEdges().get(0);
-                firstEdge.traversed();
-                if(firstEdge.getChild().equals(startNode)){
-                    currentNode=firstEdge.getParent();
+           
+            Map<String,List> firstGenomeDictionary=new <String,List> HashMap();
+            for(int i=0;i<=firstGenome.length()-k;i++){
+                String kmer=firstGenome.substring(i,i+k);
+                if(firstGenomeDictionary.containsKey(kmer)){
+                    firstGenomeDictionary.put(kmer)
                 }
-                else{
-                    currentNode=firstEdge.getChild();
-                }
-                System.out.println(currentNode.getNodeNumber());
-                notCountedInCycles.remove(currentNode);
-                System.out.println("Reached Here:");
-                while(!currentNode.equals(startNode)){    
-                    
-                    for(int j=0;j<currentNode.getEdges().size();j++){
-                        edge currentEdge=currentNode.getEdges().get(j);
-                        
-                        if(!currentEdge.isTraversed()){
-                            if(currentEdge.getChild().equals(currentNode)){
-                                currentNode=currentEdge.getParent();
-                            }
-                            else{
-                                currentNode=currentEdge.getChild();
-                            }
-                            currentEdge.traversed();
-                            notCountedInCycles.remove(currentNode);
-                           // System.out.println(currentNode.getNodeNumber());
-                        }
+            }
+           
+            
+            
+            /*String reverseKmer=reverseComplement(kmer);
+                for(int j=0;j<=secondGenome.length()-k;j++){
+                    String secondKmer=secondGenome.substring(j,j+k);
+                    if(secondKmer.equals(kmer)|| secondKmer.equals(reverseKmer)){
+                        out.print("(");
+                        out.print(i);
+                        out.print(", ");
+                        out.print(j);
+                        out.println(")");
                     }
-                    
-                    
-                   
                 }
-                
-                
-              }
-           }
-            System.out.println("Number of Cycles:");
-            out.println(count-numCycles);
+            */
+
             out.close();
                 
         }
