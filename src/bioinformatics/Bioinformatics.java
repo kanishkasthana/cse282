@@ -588,44 +588,35 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_6d.txt");
+            File newFile=new File("rosalind_7a.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
             while ((line = reader.readLine()) != null) {
              inputs.add(line);
             }
-                        
-            PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
-            Bioinformatics5 newText=new Bioinformatics5();
-            int k=Integer.parseInt(inputs.get(0));
-            String firstGenome=inputs.get(1);
-            String secondGenome=inputs.get(2);
             
-           
-            Map<String,List> firstGenomeDictionary=new <String,List> HashMap();
-            for(int i=0;i<=firstGenome.length()-k;i++){
-                String kmer=firstGenome.substring(i,i+k);
-                if(firstGenomeDictionary.containsKey(kmer)){
-                    firstGenomeDictionary.put(kmer)
-                }
+            for(int i=0;i<inputs.size();i++){
+                System.out.println(inputs.get(i));
             }
-           
+            PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
+            Bioinformatics6 newText=new Bioinformatics6();
+            node root=new node(0,inputs);
+            root.createSufixTrie();
+            System.out.println(node.allnodes.size());
+            System.out.println(edge.alledges.size());
+            for(int i=0;i<edge.alledges.size();i++){
+                edge currentEdge=edge.alledges.get(i);
+                node parent=currentEdge.getParent();
+                node child=currentEdge.getChild();
+                out.print(parent.getNodeNumber());
+                out.print("->");
+                out.print(child.getNodeNumber());
+                out.print(":");
+                out.println(currentEdge.getEdgeChar());
+            }
             
             
-            /*String reverseKmer=reverseComplement(kmer);
-                for(int j=0;j<=secondGenome.length()-k;j++){
-                    String secondKmer=secondGenome.substring(j,j+k);
-                    if(secondKmer.equals(kmer)|| secondKmer.equals(reverseKmer)){
-                        out.print("(");
-                        out.print(i);
-                        out.print(", ");
-                        out.print(j);
-                        out.println(")");
-                    }
-                }
-            */
-
             out.close();
                 
         }

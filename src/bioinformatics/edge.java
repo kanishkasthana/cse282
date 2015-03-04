@@ -21,7 +21,7 @@ public class edge {
     boolean traversed=false;
     String initialEdgeString=null;
     String terminalEdgeString=null;
-    
+    char edgeChar;
     
     public edge(String edgedata){
         
@@ -51,6 +51,19 @@ public class edge {
         this.parent=parent;
         this.child=child;
         this.edgeString=edgeString;
+        this.parent.addChild(child);
+        this.child.addParent(parent);
+        this.parent.addEdge(this);
+        this.child.addEdge(this);
+        this.alledges.add(this);
+        this.parent.addOutgoingEdge(this);
+        this.child.addIncomingEdge(this);
+    }
+    
+    public edge(node parent, node child, char edgeChar){
+        this.parent=parent;
+        this.child=child;
+        this.edgeChar=edgeChar;
         this.parent.addChild(child);
         this.child.addParent(parent);
         this.parent.addEdge(this);
@@ -132,6 +145,10 @@ public class edge {
         }
     }
     */
+    
+    public char getEdgeChar(){
+        return edgeChar;
+    }
     
     public String getInitialEdgeString(){
         return initialEdgeString;

@@ -29,9 +29,16 @@ public class node {
     String nodeString=null;
     String initial=null;
     String terminal=null;
+    List <String> inputs=null;
     
     public node(int value){
         this.value=value;
+        allnodes.add(this);
+    }
+    
+    public node(int value,List <String>inputs){
+        this.value=value;
+        this.inputs=inputs;
         allnodes.add(this);
     }
     
@@ -305,5 +312,74 @@ public class node {
     
     public void printPair(){
         System.out.println(this.initial+"|"+this.terminal);
+    }
+    
+    public void createSufixTrie(){
+      if(!inputs.isEmpty())  
+      
+      {
+        List <String> startsWithA=new <String> ArrayList();
+        List <String> startsWithC=new <String> ArrayList();
+        List <String> startsWithG=new <String> ArrayList();
+        List <String> startsWithT=new <String> ArrayList();
+        int countA=0,countC=0,countG=0,countT=0;
+        
+        for(int i=0;i<inputs.size();i++){
+            char first=inputs.get(i).charAt(0);
+            String suffix=inputs.get(i).substring(1);
+            if(first=='A'){
+                countA++;
+                if(!suffix.isEmpty())
+                    startsWithA.add(suffix);
+            }
+            
+            else if(first=='C'){
+                countC++;
+                if(!suffix.isEmpty())
+                    startsWithC.add(suffix);
+            }
+            
+            else if(first=='G'){
+                countG++;
+                if(!suffix.isEmpty())
+                    startsWithG.add(suffix);
+            }
+            
+            else if(first=='T'){
+                countT++;
+                if(!suffix.isEmpty())
+                    startsWithT.add(suffix);
+            }
+ 
+        }
+        
+        if(countA!=0){
+            node child=new node(allnodes.size(),startsWithA);
+            edge newEdge=new edge(this,child,'A');
+            child.createSufixTrie();
+        }
+        
+        if(countC!=0){
+            node child=new node(allnodes.size(),startsWithC);
+            edge newEdge=new edge(this,child,'C');
+            child.createSufixTrie();
+        }
+        
+        if(countG!=0){
+            node child=new node(allnodes.size(),startsWithG);
+            edge newEdge=new edge(this,child,'G');
+            child.createSufixTrie();
+        }
+        
+        if(countT!=0){
+            node child=new node(allnodes.size(),startsWithT);
+            edge newEdge=new edge(this,child,'T');
+            child.createSufixTrie();
+        }
+        
+      }
+      
+      else 
+          return;
     }
 }
