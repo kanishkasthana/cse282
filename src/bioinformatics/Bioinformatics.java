@@ -588,7 +588,7 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_7a.txt");
+            File newFile=new File("rosalind_7c.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -596,26 +596,50 @@ public class Bioinformatics {
              inputs.add(line);
             }
             
-            for(int i=0;i<inputs.size();i++){
-                System.out.println(inputs.get(i));
-            }
-            PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
-            Bioinformatics6 newText=new Bioinformatics6();
-            node root=new node(0,inputs);
-            root.createSufixTrie();
-            System.out.println(node.allnodes.size());
-            System.out.println(edge.alledges.size());
-            for(int i=0;i<edge.alledges.size();i++){
-                edge currentEdge=edge.alledges.get(i);
-                node parent=currentEdge.getParent();
-                node child=currentEdge.getChild();
-                out.print(parent.getNodeNumber());
-                out.print("->");
-                out.print(child.getNodeNumber());
-                out.print(":");
-                out.println(currentEdge.getEdgeChar());
+            List <String> patterns=new <String>ArrayList();
+            String genome=inputs.get(0);
+            genome=genome+"A";//Adding this extra variable because I was too lazy to add the dollar sign at the end of each string
+            //I think this might work
+            
+            for(int i=0;i<genome.length();i++){
+                patterns.add(genome.substring(i));
             }
             
+            PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
+            Bioinformatics6 newText=new Bioinformatics6();
+            node root=new node(0,patterns,0);
+            root.createSufixTrie();
+            
+            List <node>repeatedPatterns=new <node> ArrayList();
+            for(int i=0;i<node.allnodes.size();i++){
+                node currentNode=node.allnodes.get(i);
+                if(currentNode.getChildren().size()>=2){
+                    repeatedPatterns.add(currentNode);
+                }
+            }
+            
+            node longestRepeatedPattern=null;
+            int maxDepth=-1;
+            for(int i=0;i<repeatedPatterns.size();i++){
+                node currentNode=repeatedPatterns.get(i);
+                if(currentNode.getDepth()>maxDepth){
+                    maxDepth=currentNode.getDepth();
+                    longestRepeatedPattern=currentNode;
+                }
+            }
+            
+            System.out.println(maxDepth);
+            System.out.println(longestRepeatedPattern.getNodeNumber());
+            node currentNode=longestRepeatedPattern;
+            StringBuilder longestPattern=new StringBuilder();
+            
+            while(!currentNode.equals(root)){
+                edge incomingEdge=currentNode.getIncomingEdges().get(0);
+                longestPattern.append(incomingEdge.getEdgeChar());
+                currentNode=incomingEdge.getParent();
+            }
+            
+            out.println(longestPattern.reverse());
             
             out.close();
                 

@@ -21,6 +21,7 @@ public class node {
     List <edge>edges=new <edge>ArrayList();
     List <edge>outgoingEdges=new <edge>ArrayList();
     List <edge>incomingEdges=new <edge>ArrayList();
+    int nodeDepth;//To represent how deep this node is in the tree
     
     int score;
     List <node>parents=new <node>ArrayList();
@@ -36,9 +37,10 @@ public class node {
         allnodes.add(this);
     }
     
-    public node(int value,List <String>inputs){
+    public node(int value,List <String>inputs,int depth){
         this.value=value;
         this.inputs=inputs;
+        this.nodeDepth=depth;
         allnodes.add(this);
     }
     
@@ -103,6 +105,10 @@ public class node {
             return newNode;
         }
         return null;
+    }
+    
+    public int getDepth(){
+        return this.nodeDepth;
     }
     
     public String getInitialString(){
@@ -318,6 +324,7 @@ public class node {
       if(!inputs.isEmpty())  
       
       {
+        
         List <String> startsWithA=new <String> ArrayList();
         List <String> startsWithC=new <String> ArrayList();
         List <String> startsWithG=new <String> ArrayList();
@@ -354,25 +361,25 @@ public class node {
         }
         
         if(countA!=0){
-            node child=new node(allnodes.size(),startsWithA);
+            node child=new node(allnodes.size(),startsWithA,this.getDepth()+1);
             edge newEdge=new edge(this,child,'A');
             child.createSufixTrie();
         }
         
         if(countC!=0){
-            node child=new node(allnodes.size(),startsWithC);
+            node child=new node(allnodes.size(),startsWithC,this.getDepth()+1);
             edge newEdge=new edge(this,child,'C');
             child.createSufixTrie();
         }
         
         if(countG!=0){
-            node child=new node(allnodes.size(),startsWithG);
+            node child=new node(allnodes.size(),startsWithG,this.getDepth()+1);
             edge newEdge=new edge(this,child,'G');
             child.createSufixTrie();
         }
         
         if(countT!=0){
-            node child=new node(allnodes.size(),startsWithT);
+            node child=new node(allnodes.size(),startsWithT,this.getDepth()+1);
             edge newEdge=new edge(this,child,'T');
             child.createSufixTrie();
         }
@@ -381,5 +388,19 @@ public class node {
       
       else 
           return;
+    }
+    
+    public edge charPresentInEdges(char c){
+        edge matchedEdge=null;
+        
+        for(int i=0;i<this.outgoingEdges.size();i++){
+            edge currentEdge=this.outgoingEdges.get(i);
+            if(currentEdge.getEdgeChar()==c){
+                matchedEdge=currentEdge;
+                break;
+            }
+        }
+        
+        return matchedEdge;
     }
 }
