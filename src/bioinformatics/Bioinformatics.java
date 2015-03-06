@@ -588,7 +588,7 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_7c.txt");
+            File newFile=new File("testdata.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -596,15 +596,16 @@ public class Bioinformatics {
              inputs.add(line);
             }
             
-            List <String> patterns=new <String>ArrayList();
+            List patterns=new ArrayList();
             String genome=inputs.get(0);
             genome=genome+"A";//Adding this extra variable because I was too lazy to add the dollar sign at the end of each string
             //I think this might work
             
             for(int i=0;i<genome.length();i++){
-                patterns.add(genome.substring(i));
+                patterns.add(i);
             }
-            
+            //Setting genome in Node
+            node.setGenome(genome);
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             Bioinformatics6 newText=new Bioinformatics6();
             node root=new node(0,patterns,0);
@@ -639,7 +640,7 @@ public class Bioinformatics {
                 currentNode=incomingEdge.getParent();
             }
             
-            out.println(longestPattern.reverse());
+            System.out.println(longestPattern.reverse());
             
             out.close();
                 

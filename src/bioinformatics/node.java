@@ -13,6 +13,7 @@ import java.util.*;
  */
 public class node {
     public static List<node> allnodes=new <node>ArrayList();
+    public static List<edge> alledges=new <edge>ArrayList();
     int matrixlevel;
     int value;
     int i;
@@ -22,6 +23,7 @@ public class node {
     List <edge>outgoingEdges=new <edge>ArrayList();
     List <edge>incomingEdges=new <edge>ArrayList();
     int nodeDepth;//To represent how deep this node is in the tree
+    public static String genome;
     
     int score;
     List <node>parents=new <node>ArrayList();
@@ -30,14 +32,14 @@ public class node {
     String nodeString=null;
     String initial=null;
     String terminal=null;
-    List <String> inputs=null;
+    List inputs=null;
     
     public node(int value){
         this.value=value;
         allnodes.add(this);
     }
     
-    public node(int value,List <String>inputs,int depth){
+    public node(int value,List inputs,int depth){
         this.value=value;
         this.inputs=inputs;
         this.nodeDepth=depth;
@@ -58,6 +60,7 @@ public class node {
         allnodes.add(this);
         this.setScore(0);
     }*/
+    
     
     public node(int i,int j, int k){
         this.i=i;
@@ -105,6 +108,10 @@ public class node {
             return newNode;
         }
         return null;
+    }
+    
+    public static void setGenome(String genome){
+        node.genome=genome;
     }
     
     public int getDepth(){
@@ -325,36 +332,36 @@ public class node {
       
       {
         
-        List <String> startsWithA=new <String> ArrayList();
-        List <String> startsWithC=new <String> ArrayList();
-        List <String> startsWithG=new <String> ArrayList();
-        List <String> startsWithT=new <String> ArrayList();
+        List startsWithA=new ArrayList();
+        List startsWithC=new ArrayList();
+        List startsWithG=new ArrayList();
+        List startsWithT=new ArrayList();
         int countA=0,countC=0,countG=0,countT=0;
         
         for(int i=0;i<inputs.size();i++){
-            char first=inputs.get(i).charAt(0);
-            String suffix=inputs.get(i).substring(1);
+            char first=genome.substring((int)inputs.get(i)).charAt(0);
+            int suffix=((int)inputs.get(i))+1;
             if(first=='A'){
                 countA++;
-                if(!suffix.isEmpty())
+                if(suffix<genome.length())
                     startsWithA.add(suffix);
             }
             
             else if(first=='C'){
                 countC++;
-                if(!suffix.isEmpty())
+                if(suffix<genome.length())
                     startsWithC.add(suffix);
             }
             
             else if(first=='G'){
                 countG++;
-                if(!suffix.isEmpty())
+                if(suffix<genome.length())
                     startsWithG.add(suffix);
             }
             
             else if(first=='T'){
                 countT++;
-                if(!suffix.isEmpty())
+                if(suffix<genome.length())
                     startsWithT.add(suffix);
             }
  
@@ -362,25 +369,25 @@ public class node {
         
         if(countA!=0){
             node child=new node(allnodes.size(),startsWithA,this.getDepth()+1);
-            edge newEdge=new edge(this,child,'A');
+            alledges.add(new edge(this,child,'A'));
             child.createSufixTrie();
         }
         
         if(countC!=0){
             node child=new node(allnodes.size(),startsWithC,this.getDepth()+1);
-            edge newEdge=new edge(this,child,'C');
+            alledges.add(new edge(this,child,'C'));
             child.createSufixTrie();
         }
         
         if(countG!=0){
             node child=new node(allnodes.size(),startsWithG,this.getDepth()+1);
-            edge newEdge=new edge(this,child,'G');
+            alledges.add(new edge(this,child,'G'));
             child.createSufixTrie();
         }
         
         if(countT!=0){
             node child=new node(allnodes.size(),startsWithT,this.getDepth()+1);
-            edge newEdge=new edge(this,child,'T');
+            alledges.add(new edge(this,child,'T'));
             child.createSufixTrie();
         }
         
