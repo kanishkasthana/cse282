@@ -626,7 +626,7 @@ public class Bioinformatics {
         return sortedList;
     }
     
-    public static void createTree(List <Integer>LCParray,List <Integer> patterns,String genome){
+    public static node createTree(List <Integer>LCParray,List <Integer> patterns,String genome){
         
         node root=new node(0);
         node currentNode=root;
@@ -669,6 +669,8 @@ public class Bioinformatics {
                 currentDepth=currentNode.getNodeNumber();
             }
         }
+        
+        return root;
     
     }
 
@@ -683,7 +685,7 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_7d.txt");
+            File newFile=new File("rosalind_7c.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -694,6 +696,7 @@ public class Bioinformatics {
             
             List <Integer>patterns=new <Integer>ArrayList();
             String genome=inputs.get(0);
+            genome=genome+"$";
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             Bioinformatics6 newText=new Bioinformatics6();
             
@@ -725,11 +728,38 @@ public class Bioinformatics {
                 LCParray.add(count);
             }
                   
-            createTree(LCParray,patterns,genome);
-            for(int i=0;i<edge.alledges.size();i++){
-                out.println(edge.alledges.get(i).getEdgeString());
+            node root=createTree(LCParray,patterns,genome);
+            
+            List <node>repeatedPatterns=new <node> ArrayList();
+            for(int i=0;i<node.allnodes.size();i++){
+                node currentNode=node.allnodes.get(i);
+                if(currentNode.getChildren().size()>=2){
+                    repeatedPatterns.add(currentNode);
+                }
             }
             
+            node longestRepeatedPattern=null;
+            int maxDepth=-1;
+            for(int i=0;i<repeatedPatterns.size();i++){
+                node currentNode=repeatedPatterns.get(i);
+                if(currentNode.getNodeNumber()>maxDepth){
+                    maxDepth=currentNode.getNodeNumber();
+                    longestRepeatedPattern=currentNode;
+                }
+            }
+            
+            System.out.println(maxDepth);
+            node currentNode=longestRepeatedPattern;
+            String longestPattern="";
+            List <String> fixingOut=new <String> ArrayList();
+            while(!currentNode.equals(root)){
+                edge incomingEdge=currentNode.getIncomingEdges().get(0);
+                longestPattern=incomingEdge.getEdgeString()+longestPattern;
+                currentNode=incomingEdge.getParent();
+            }
+            
+            System.out.println(root.getChildren().size());
+            out.println(longestPattern);
             out.close();
                 
         }
