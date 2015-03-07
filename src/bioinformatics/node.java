@@ -410,4 +410,11 @@ public class node {
         
         return matchedEdge;
     }
+    
+    public void deleteEdge(edge e){
+        this.outgoingEdges.remove(e);
+        this.edges.remove(e);
+        edge.alledges.remove(e);
+        this.incomingEdges.remove(e);
+    }
 }

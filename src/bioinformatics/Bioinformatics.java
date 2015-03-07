@@ -578,7 +578,7 @@ public class Bioinformatics {
         return null;
     }
     
-        public static List mergeSort(List list,String genome){
+        public static List<Integer> mergeSort(List <Integer>list,String genome){
             
         if(list.size()==1){
             return list;
@@ -594,38 +594,83 @@ public class Bioinformatics {
         return sortedList;
     }
         
-    public static List merge(List list1,List list2,String genome){
-        List sortedList=new ArrayList();
+    public static List<Integer> merge(List <Integer>list1,List <Integer>list2,String genome){
+        List <Integer>sortedList=new <Integer>ArrayList();
         int firstStringPos=0,secondStringPos=0;
         String current1,current2;
         
         while(firstStringPos<list1.size() && secondStringPos<list2.size()){
-            current1=genome.substring((int)list1.get(firstStringPos));
-            current2=genome.substring((int)list2.get(secondStringPos));
+            current1=genome.substring(list1.get(firstStringPos));
+            current2=genome.substring(list2.get(secondStringPos));
             
             if(current1.compareTo(current2)<0){
-                sortedList.add((int)list1.get(firstStringPos));
+                sortedList.add(list1.get(firstStringPos));
                 firstStringPos++;
             }
             else{
-                sortedList.add((int)list2.get(secondStringPos));
+                sortedList.add(list2.get(secondStringPos));
                 secondStringPos++;
             }
         }
         
         
         for(int i=firstStringPos;i<list1.size();i++){
-            sortedList.add((int)list1.get(i));
+            sortedList.add(list1.get(i));
         }
         
         
         for(int i=secondStringPos;i<list2.size();i++){
-            sortedList.add((int)list2.get(i));
+            sortedList.add(list2.get(i));
         }
         
         return sortedList;
     }
-
+    
+    public static void createTree(List <Integer>LCParray,List <Integer> patterns,String genome){
+        
+        node root=new node(0);
+        node currentNode=root;
+        int currentDepth=currentNode.getNodeNumber();
+        
+        for(int i=0;i<patterns.size();i++){
+            
+            String currentString=genome.substring(patterns.get(i));
+            currentDepth=currentNode.getNodeNumber();
+            //Storing Path taken everytime this should help fix the problem hopefully
+            List <edge>edgesVisited=new <edge>ArrayList();
+            
+            while(currentDepth>LCParray.get(i)){
+                edgesVisited.add(currentNode.getIncomingEdges().get(0));
+                currentNode=currentNode.getParents().get(0);
+                currentDepth=currentNode.getNodeNumber();
+            }
+                       
+            if(currentDepth==LCParray.get(i)){
+                node newNode=new node(currentString.length());
+                edge newEdge=new edge(currentNode,newNode,currentString.substring(currentDepth));
+                currentNode=newNode;
+                currentDepth=currentNode.getNodeNumber();
+            }
+            
+            else if(currentDepth<LCParray.get(i)){
+                //This should hopefully fix the problem lets see what happens
+                edge splitEdge=edgesVisited.get(edgesVisited.size()-1);
+                node oldChild=splitEdge.getChild();
+                String splitEdgeString= splitEdge.getEdgeString();
+                currentNode.deleteEdge(splitEdge);
+                oldChild.deleteEdge(splitEdge);
+                int intermediateDepth=LCParray.get(i);
+                node newIntermediateNode=new node(intermediateDepth);
+                edge newIntermediateEdge=new edge(currentNode,newIntermediateNode,currentString.substring(currentNode.getNodeNumber(),intermediateDepth));
+                edge secondSplitEdge=new edge(newIntermediateNode,oldChild,splitEdgeString.substring(intermediateDepth-currentDepth));
+                node newNode=new node(currentString.length());
+                edge newEdge=new edge(newIntermediateNode,newNode,currentString.substring(intermediateDepth));
+                currentNode=newNode;
+                currentDepth=currentNode.getNodeNumber();
+            }
+        }
+    
+    }
 
     /**
      * @param args the command line arguments
@@ -638,7 +683,7 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_7g.txt");
+            File newFile=new File("rosalind_7d.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -647,9 +692,8 @@ public class Bioinformatics {
              inputs.add(line);
             }
             
-            List patterns=new ArrayList();
+            List <Integer>patterns=new <Integer>ArrayList();
             String genome=inputs.get(0);
-            System.out.println(genome);
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             Bioinformatics6 newText=new Bioinformatics6();
             
@@ -657,12 +701,35 @@ public class Bioinformatics {
                 patterns.add(i);
             }
             patterns=mergeSort(patterns,genome);
-            for(int i=0;i<patterns.size();i++){
-                out.print((int)patterns.get(i));
-                if(i!=patterns.size()-1)
-                    out.print(", ");
+
+            List <Integer>LCParray=new <Integer> ArrayList();
+            LCParray.add(0);
+            for(int i=0;i<patterns.size()-1;i++){
+                
+                String first=genome.substring(patterns.get(i));
+                String second=genome.substring(patterns.get(i+1));
+                String larger,smaller;
+                if(first.length()>=second.length()){
+                    larger=first;
+                    smaller=second;
+                }
+                else{
+                    larger=second;
+                    smaller=first;
+                }
+                int count;
+                for(count=0;count<smaller.length();count++){
+                   if(smaller.charAt(count)!=larger.charAt(count))
+                       break;
+                }
+                LCParray.add(count);
             }
-            out.println();
+                  
+            createTree(LCParray,patterns,genome);
+            for(int i=0;i<edge.alledges.size();i++){
+                out.println(edge.alledges.get(i).getEdgeString());
+            }
+            
             out.close();
                 
         }
