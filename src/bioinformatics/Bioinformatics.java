@@ -690,7 +690,7 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_7e.txt");
+            File newFile=new File("rosalind_7f.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -740,6 +740,7 @@ public class Bioinformatics {
                   
             node root=createTree(LCParray,patterns,genome);
             
+            /*
             List <node>repeatedPatterns=new <node> ArrayList();
             for(int i=0;i<node.allnodes.size();i++){
                 node currentNode=node.allnodes.get(i);
@@ -770,6 +771,7 @@ public class Bioinformatics {
             
             System.out.println(root.getChildren().size());
             System.out.println(longestPattern);
+            */
             
             List <node> allnodes=new <node>ArrayList();
             List <node> leafs=new <node>ArrayList();
@@ -802,32 +804,32 @@ public class Bioinformatics {
                 }
             }
             
-            List <node> allpurple=new <node> ArrayList();
+            List <node> allblue=new <node> ArrayList();
             for(int i=0;i<node.allnodes.size();i++){
                 node n=node.allnodes.get(i);
-                if(n.getColor()!=purple){
-                    allpurple.add(n);
+                if(n.getColor()==blue){
+                    allblue.add(n);
                 }
             }
             
-            int depth=-1;
-            node mostDeepNode=null;
-            for(int i=0;i<allpurple.size();i++){
-                if(allpurple.get(i).getNodeNumber()>=depth){
-                    depth=allpurple.get(i).getNodeNumber();
-                    mostDeepNode=allpurple.get(i);
+            int depth=1000000;
+            node leastDeepNode=null;
+            for(int i=0;i<allblue.size();i++){
+                if(allblue.get(i).getNodeNumber()<=depth && allblue.get(i).getNodeNumber()>1){
+                    depth=allblue.get(i).getNodeNumber();
+                    leastDeepNode=allblue.get(i);
                 }
             }
             
-            currentNode=mostDeepNode;
-            longestPattern="";
+            node currentNode=leastDeepNode;
+            String shortestPattern="";
             while(!currentNode.equals(root)){
                 edge incomingEdge=currentNode.getIncomingEdges().get(0);
-                longestPattern=incomingEdge.getEdgeString()+longestPattern;
+                shortestPattern=incomingEdge.getEdgeString()+shortestPattern;
                 currentNode=incomingEdge.getParent();
             }
             
-            out.println(longestPattern);
+            System.out.println(shortestPattern);
                  
 
             
