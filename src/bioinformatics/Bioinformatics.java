@@ -20,12 +20,15 @@ public class Bioinformatics {
     public static int lower=-1;
     public static int middle=0;
     
+    
     private String text=null;
     private List frequentPatterns=null;
     int[] frequencyArray=null;
     private String reverseText=null;
     public static int red=1;
     public static int blue=2;
+    public static int purple=3;
+    public static int gray=0;
     
     public Bioinformatics(String text){
         this.text=text;
@@ -673,7 +676,9 @@ public class Bioinformatics {
         return root;
     
     }
-
+      
+    
+    
     /**
      * @param args the command line arguments
      */
@@ -685,7 +690,7 @@ public class Bioinformatics {
             List<String> matrixInputs=new <String>ArrayList();
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_7c.txt");
+            File newFile=new File("rosalind_7e.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -695,8 +700,13 @@ public class Bioinformatics {
             }
             
             List <Integer>patterns=new <Integer>ArrayList();
-            String genome=inputs.get(0);
-            genome=genome+"$";
+            String genome1=inputs.get(0);
+            String genome2=inputs.get(1);
+            genome1=genome1+"#";
+            genome2=genome2+"$";
+            String genome=genome1+genome2;
+            System.out.println(genome);
+            
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             Bioinformatics6 newText=new Bioinformatics6();
             
@@ -759,7 +769,68 @@ public class Bioinformatics {
             }
             
             System.out.println(root.getChildren().size());
+            System.out.println(longestPattern);
+            
+            List <node> allnodes=new <node>ArrayList();
+            List <node> leafs=new <node>ArrayList();
+            //Copying all the nodes into this List
+            for(int i=0;i<node.allnodes.size();i++){
+                allnodes.add(node.allnodes.get(i));
+                if(node.allnodes.get(i).getChildren().isEmpty())
+                    leafs.add(node.allnodes.get(i));
+            }
+            
+            //Painting all nodes for colouring
+            for(int i=0;i<leafs.size();i++){
+                edge incoming=leafs.get(i).getIncomingEdges().get(0);
+                String edgeString=incoming.getEdgeString();
+                if(edgeString.contains("#")){
+                    leafs.get(i).setColor(blue);
+                }
+                if(edgeString.contains("$") && !edgeString.contains("#")){
+                    leafs.get(i).setColor(red);
+                }
+            }
+            
+            System.out.println(leafs.size());
+            
+            while(node.hasRipeNodes()){    
+                for(int i=0;i<node.allnodes.size();i++){
+                   if(node.allnodes.get(i).isAllChildrenColourd()){
+                       node.allnodes.get(i).decideColour();
+                   }
+                }
+            }
+            
+            List <node> allpurple=new <node> ArrayList();
+            for(int i=0;i<node.allnodes.size();i++){
+                node n=node.allnodes.get(i);
+                if(n.getColor()!=purple){
+                    allpurple.add(n);
+                }
+            }
+            
+            int depth=-1;
+            node mostDeepNode=null;
+            for(int i=0;i<allpurple.size();i++){
+                if(allpurple.get(i).getNodeNumber()>=depth){
+                    depth=allpurple.get(i).getNodeNumber();
+                    mostDeepNode=allpurple.get(i);
+                }
+            }
+            
+            currentNode=mostDeepNode;
+            longestPattern="";
+            while(!currentNode.equals(root)){
+                edge incomingEdge=currentNode.getIncomingEdges().get(0);
+                longestPattern=incomingEdge.getEdgeString()+longestPattern;
+                currentNode=incomingEdge.getParent();
+            }
+            
             out.println(longestPattern);
+                 
+
+            
             out.close();
                 
         }

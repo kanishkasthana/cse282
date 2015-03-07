@@ -5,6 +5,7 @@
  */
 package bioinformatics;
 
+import static bioinformatics.Bioinformatics.*;
 import java.io.*;
 import java.util.*;
 /**
@@ -33,6 +34,7 @@ public class node {
     String initial=null;
     String terminal=null;
     List inputs=null;
+    int colour=Bioinformatics.gray;
     
     public node(int value){
         this.value=value;
@@ -108,6 +110,14 @@ public class node {
             return newNode;
         }
         return null;
+    }
+    
+    public void setColor(int colour){
+        this.colour=colour;
+    }
+    
+    public int getColor(){
+        return colour;
     }
     
     public static void setGenome(String genome){
@@ -416,5 +426,60 @@ public class node {
         this.edges.remove(e);
         edge.alledges.remove(e);
         this.incomingEdges.remove(e);
+    }
+    
+    public boolean isAllChildrenColourd(){
+        if(!this.children.isEmpty())
+        {
+            boolean allColoured=true;
+            for(int i=0;i<this.getChildren().size();i++){
+                node child=this.getChildren().get(i);
+                if(child.getColor()==gray){
+                    allColoured=false;
+                    break;
+                }
+            }    
+            return allColoured;
+        }
+        else{
+            return false;
+        }
+    }
+    public static boolean hasRipeNodes(){
+       boolean ripe=false;
+       
+       for(int i=0;i<allnodes.size();i++){
+           if(allnodes.get(i).getColor()==gray){
+               ripe=true;
+               break;
+           }
+       }
+       
+       return ripe;
+    }
+    
+    public void decideColour(){
+        int redCount=0;
+        int blueCount=0;
+        for(int i=0;i<this.children.size();i++){
+            node child=this.children.get(i);
+            if(child.getColor()==red){
+                redCount++;
+            }
+        
+            if(child.getColor()==blue){
+                blueCount++;
+            }
+        }
+        
+        if(redCount==this.children.size()){
+            this.setColor(red);
+        }
+        else if(blueCount==this.children.size()){
+            this.setColor(blue);
+        }
+        else{
+            this.setColor(purple);
+        }
     }
 }
