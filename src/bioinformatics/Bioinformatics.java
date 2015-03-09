@@ -686,11 +686,10 @@ public class Bioinformatics {
         try{
             //Getting Working Directory
             System.out.println(System.getProperty("user.dir"));
-            //Storing inputs in list inputs
-            List<String> matrixInputs=new <String>ArrayList();
+            PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_7f.txt");
+            File newFile=new File("rosalind_7i.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -699,139 +698,23 @@ public class Bioinformatics {
              inputs.add(line);
             }
             
-            List <Integer>patterns=new <Integer>ArrayList();
-            String genome1=inputs.get(0);
-            String genome2=inputs.get(1);
-            genome1=genome1+"#";
-            genome2=genome2+"$";
-            String genome=genome1+genome2;
-            System.out.println(genome);
+            String text=inputs.get(0);
             
-            PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
-            Bioinformatics6 newText=new Bioinformatics6();
+            List <String>BWTMatrix= new <String> ArrayList();
             
-            for(int i=0;i<genome.length();i++){
-                patterns.add(i);
-            }
-            patterns=mergeSort(patterns,genome);
-
-            List <Integer>LCParray=new <Integer> ArrayList();
-            LCParray.add(0);
-            for(int i=0;i<patterns.size()-1;i++){
-                
-                String first=genome.substring(patterns.get(i));
-                String second=genome.substring(patterns.get(i+1));
-                String larger,smaller;
-                if(first.length()>=second.length()){
-                    larger=first;
-                    smaller=second;
-                }
-                else{
-                    larger=second;
-                    smaller=first;
-                }
-                int count;
-                for(count=0;count<smaller.length();count++){
-                   if(smaller.charAt(count)!=larger.charAt(count))
-                       break;
-                }
-                LCParray.add(count);
-            }
-                  
-            node root=createTree(LCParray,patterns,genome);
-            
-            /*
-            List <node>repeatedPatterns=new <node> ArrayList();
-            for(int i=0;i<node.allnodes.size();i++){
-                node currentNode=node.allnodes.get(i);
-                if(currentNode.getChildren().size()>=2){
-                    repeatedPatterns.add(currentNode);
-                }
+            for(int i=0;i<text.length();i++){
+                BWTMatrix.add(text.substring(i)+text.substring(0,i));
             }
             
-            node longestRepeatedPattern=null;
-            int maxDepth=-1;
-            for(int i=0;i<repeatedPatterns.size();i++){
-                node currentNode=repeatedPatterns.get(i);
-                if(currentNode.getNodeNumber()>maxDepth){
-                    maxDepth=currentNode.getNodeNumber();
-                    longestRepeatedPattern=currentNode;
-                }
+            BWTMatrix=Bioinformatics4.mergeSort(BWTMatrix);
+            
+            StringBuilder BWT=new StringBuilder();
+            
+            for(int i=0;i<text.length();i++){
+                BWT.append(BWTMatrix.get(i).charAt(text.length()-1));
             }
             
-            System.out.println(maxDepth);
-            node currentNode=longestRepeatedPattern;
-            String longestPattern="";
-            List <String> fixingOut=new <String> ArrayList();
-            while(!currentNode.equals(root)){
-                edge incomingEdge=currentNode.getIncomingEdges().get(0);
-                longestPattern=incomingEdge.getEdgeString()+longestPattern;
-                currentNode=incomingEdge.getParent();
-            }
-            
-            System.out.println(root.getChildren().size());
-            System.out.println(longestPattern);
-            */
-            
-            List <node> allnodes=new <node>ArrayList();
-            List <node> leafs=new <node>ArrayList();
-            //Copying all the nodes into this List
-            for(int i=0;i<node.allnodes.size();i++){
-                allnodes.add(node.allnodes.get(i));
-                if(node.allnodes.get(i).getChildren().isEmpty())
-                    leafs.add(node.allnodes.get(i));
-            }
-            
-            //Painting all nodes for colouring
-            for(int i=0;i<leafs.size();i++){
-                edge incoming=leafs.get(i).getIncomingEdges().get(0);
-                String edgeString=incoming.getEdgeString();
-                if(edgeString.contains("#")){
-                    leafs.get(i).setColor(blue);
-                }
-                if(edgeString.contains("$") && !edgeString.contains("#")){
-                    leafs.get(i).setColor(red);
-                }
-            }
-            
-            System.out.println(leafs.size());
-            
-            while(node.hasRipeNodes()){    
-                for(int i=0;i<node.allnodes.size();i++){
-                   if(node.allnodes.get(i).isAllChildrenColourd()){
-                       node.allnodes.get(i).decideColour();
-                   }
-                }
-            }
-            
-            List <node> allblue=new <node> ArrayList();
-            for(int i=0;i<node.allnodes.size();i++){
-                node n=node.allnodes.get(i);
-                if(n.getColor()==blue){
-                    allblue.add(n);
-                }
-            }
-            
-            int depth=1000000;
-            node leastDeepNode=null;
-            for(int i=0;i<allblue.size();i++){
-                if(allblue.get(i).getNodeNumber()<=depth && allblue.get(i).getNodeNumber()>1){
-                    depth=allblue.get(i).getNodeNumber();
-                    leastDeepNode=allblue.get(i);
-                }
-            }
-            
-            node currentNode=leastDeepNode;
-            String shortestPattern="";
-            while(!currentNode.equals(root)){
-                edge incomingEdge=currentNode.getIncomingEdges().get(0);
-                shortestPattern=incomingEdge.getEdgeString()+shortestPattern;
-                currentNode=incomingEdge.getParent();
-            }
-            
-            System.out.println(shortestPattern);
-                 
-
+            out.println(BWT);
             
             out.close();
                 
