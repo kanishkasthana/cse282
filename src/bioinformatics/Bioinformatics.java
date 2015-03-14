@@ -676,7 +676,32 @@ public class Bioinformatics {
         return root;
     
     }
-      
+    
+    public static int countNumber(String text,int index){
+        int countNumber=0;
+        char ch=text.charAt(index);
+
+        for(int i=0;i<=index;i++){
+            if(ch==text.charAt(i))
+                countNumber++;
+        }
+        
+        return countNumber;
+    }
+    
+    public static int indexForCount(String text,int count,char ch){
+        int countNumber=0;
+        for(int i=0;i<text.length();i++){
+            if(text.charAt(i)==ch){
+                countNumber++;
+            }
+            if(countNumber==count){
+                return i;
+            }
+        }
+        
+        return -1;
+    }
     
     
     /**
@@ -689,7 +714,7 @@ public class Bioinformatics {
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_7i.txt");
+            File newFile=new File("rosalind_7j.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -698,23 +723,39 @@ public class Bioinformatics {
              inputs.add(line);
             }
             
-            String text=inputs.get(0);
+            String BWT=inputs.get(0);
             
-            List <String>BWTMatrix= new <String> ArrayList();
+            List <String>firstColumn= new <String> ArrayList();
             
-            for(int i=0;i<text.length();i++){
-                BWTMatrix.add(text.substring(i)+text.substring(0,i));
+            
+            for(int i=0;i<BWT.length();i++){
+                firstColumn.add(BWT.charAt(i)+"");
             }
             
-            BWTMatrix=Bioinformatics4.mergeSort(BWTMatrix);
+            firstColumn=Bioinformatics4.mergeSort(firstColumn);
             
-            StringBuilder BWT=new StringBuilder();
+            String first="";
             
-            for(int i=0;i<text.length();i++){
-                BWT.append(BWTMatrix.get(i).charAt(text.length()-1));
+            for(int i=0;i<firstColumn.size();i++){
+                first=first+firstColumn.get(i);
             }
             
-            out.println(BWT);
+            StringBuilder inverseTransform=new StringBuilder();
+            
+            char currentChar=first.charAt(0);
+            int count=1;
+            for(int i=0;i<BWT.length()-1;i++){
+                int index=indexForCount(BWT,count,currentChar);
+                currentChar=first.charAt(index);
+                inverseTransform.append(currentChar);
+                count=countNumber(first,index);
+            }           
+            
+            inverseTransform.append("$");
+            
+            out.println(inverseTransform);
+            
+            System.out.println(BWT);
             
             out.close();
                 
