@@ -9,6 +9,7 @@ import static bioinformatics.Bioinformatics3.getPos;
 import java.io.*;
 import java.util.*;
 import java.lang.Math;
+import java.lang.*;
 
 /**
  *
@@ -714,7 +715,7 @@ public class Bioinformatics {
             PrintWriter out= new PrintWriter(new FileWriter("out.txt"));
             List<String> inputs= new <String>ArrayList();
             //Reading downloaded file
-            File newFile=new File("rosalind_7j.txt");
+            File newFile=new File("rosalind_11b.txt");
             FileReader fileReader=new FileReader(newFile);
             BufferedReader reader=new BufferedReader(fileReader);
             String line = null;
@@ -723,39 +724,40 @@ public class Bioinformatics {
              inputs.add(line);
             }
             
-            String BWT=inputs.get(0);
+            HashMap<String,Double> obstable=new HashMap<String,Double>();
+            String path=inputs.get(0);
+            System.out.println(path);
+            String states=inputs.get(4);
+            System.out.println(states);
+            StringTokenizer stateValues=new StringTokenizer(inputs.get(9));
+            stateValues.nextToken();
+            obstable.put("AA", Double.parseDouble(stateValues.nextToken()));
+            obstable.put("BA",Double.parseDouble(stateValues.nextToken()));
+            stateValues=new StringTokenizer(inputs.get(10));
+            stateValues.nextToken();
+            obstable.put("AB", Double.parseDouble(stateValues.nextToken()));
+            obstable.put("BB", Double.parseDouble(stateValues.nextToken()));
             
-            List <String>firstColumn= new <String> ArrayList();
+            stateValues=new StringTokenizer(inputs.get(13));
+            stateValues.nextToken();
+            obstable.put("xA",Double.parseDouble(stateValues.nextToken()));
+            obstable.put("yA", Double.parseDouble(stateValues.nextToken()));
+            obstable.put("zA", Double.parseDouble(stateValues.nextToken()));
+            stateValues=new StringTokenizer(inputs.get(14));
+            stateValues.nextToken();
+            obstable.put("xB",Double.parseDouble(stateValues.nextToken()));
+            obstable.put("yB", Double.parseDouble(stateValues.nextToken()));
+            obstable.put("zB", Double.parseDouble(stateValues.nextToken()));
             
-            
-            for(int i=0;i<BWT.length();i++){
-                firstColumn.add(BWT.charAt(i)+"");
+            double multiple=1;
+            for(int i=0;i<path.length();i++){
+                String state=""+path.charAt(i)+states.charAt(i);
+                multiple*=obstable.get(state);
             }
             
-            firstColumn=Bioinformatics4.mergeSort(firstColumn);
+            //Output Answer
+            out.println(multiple);
             
-            String first="";
-            
-            for(int i=0;i<firstColumn.size();i++){
-                first=first+firstColumn.get(i);
-            }
-            
-            StringBuilder inverseTransform=new StringBuilder();
-            
-            char currentChar=first.charAt(0);
-            int count=1;
-            for(int i=0;i<BWT.length()-1;i++){
-                int index=indexForCount(BWT,count,currentChar);
-                currentChar=first.charAt(index);
-                inverseTransform.append(currentChar);
-                count=countNumber(first,index);
-            }           
-            
-            inverseTransform.append("$");
-            
-            out.println(inverseTransform);
-            
-            System.out.println(BWT);
             
             out.close();
                 
